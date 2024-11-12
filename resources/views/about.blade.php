@@ -36,7 +36,7 @@
                     officiis sunt.</p>
             </div>
             <div class="col-lg-5 col-md-5 mb-4 order-lg-2 order-md-2 order-1">
-                <img src="images/p1.jpg" alt="" class="w-100">
+                <img src="{{asset('images/p1.jpg')}}" alt="" class="w-100">
             </div>
         </div>
     </div>
@@ -44,25 +44,25 @@
         <div class="row">
             <div class="col-lg-3 col-md-6 mb-4 px-4">
                 <div class="bg-white rounded shdow p-4 border-top border-4 text-center box">
-                    <img src="images/hotel.svg" alt="" width="70px">
+                    <img src="{{asset('images/hotel.svg')}}" alt="" width="70px">
                     <h2 class="mt-3">100+ Rooms</h2>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4 px-4">
                 <div class="bg-white rounded shdow p-4 border-top border-4 text-center box">
-                    <img src="images/staff.svg" alt="" width="70px">
+                    <img src="{{asset('images/staff.svg')}}" alt="" width="70px">
                     <h2 class="mt-3">100+ staffs</h2>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4 px-4">
                 <div class="bg-white rounded shdow p-4 border-top border-4 text-center box">
-                    <img src="images/customers.svg" alt="" width="70px">
+                    <img src="{{asset('images/customers.svg')}}" alt="" width="70px">
                     <h2 class="mt-3">200+ customers</h2>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4 px-4">
                 <div class="bg-white rounded shdow p-4 border-top border-4 text-center box">
-                    <img src="images/rating.svg" alt="" width="70px">
+                    <img src="{{asset('images/rating.svg')}}" alt="" width="70px">
                     <h2 class="mt-3">150+ Reviews</h2>
                 </div>
             </div>
@@ -75,31 +75,31 @@
         <div class="swiper mySwiper ">
             <div class="swiper-wrapper mb-5">
                 <div class="swiper-slide bg-white text-center overflow-hidden rounded">
-                    <img src="images/p.jpg" alt="" class="w-100">
+                    <img src="{{asset('images/p.jpg')}}" alt="" class="w-100">
                     <h2 class="mt-2">Rendom Name</h2>
                 </div>
                 <div class="swiper-slide bg-white text-center overflow-hidden rounded">
-                    <img src="images/p.jpg" alt="" class="w-100">
+                    <img src="{{asset('images/p.jpg')}}" alt="" class="w-100">
                     <h2 class="mt-2">Rendom Name</h2>
                 </div>
                 <div class="swiper-slide bg-white text-center overflow-hidden rounded">
-                    <img src="images/p.jpg" alt="" class="w-100">
+                    <img src="{{asset('images/p.jpg')}}" alt="" class="w-100">
                     <h2 class="mt-2">Rendom Name</h2>
                 </div>
                 <div class="swiper-slide bg-white text-center overflow-hidden rounded">
-                    <img src="images/p.jpg" alt="" class="w-100">
+                    <img src="{{asset('images/p.jpg')}}" alt="" class="w-100">
                     <h2 class="mt-2">Rendom Name</h2>
                 </div>
                 <div class="swiper-slide bg-white text-center overflow-hidden rounded">
-                    <img src="images/p.jpg" alt="" class="w-100">
+                    <img src="{{asset('images/p.jpg')}}" alt="" class="w-100">
                     <h2 class="mt-2">Rendom Name</h2>
                 </div>
                 <div class="swiper-slide bg-white text-center overflow-hidden rounded">
-                    <img src="images/p.jpg" alt="" class="w-100">
+                    <img src="{{asset('images/p.jpg')}}" alt="" class="w-100">
                     <h2 class="mt-2">Rendom Name</h2>
                 </div>
                 <div class="swiper-slide bg-white text-center overflow-hidden rounded">
-                    <img src="images/p.jpg" alt="" class="w-100">
+                    <img src="{{asset('images/p.jpg')}}" alt="" class="w-100">
                     <h2 class="mt-2">Rendom Name</h2>
                 </div>
 

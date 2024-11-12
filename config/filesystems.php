@@ -50,7 +50,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => public_path('member'),  // Custom path in the 'public' folder
+            'root' => public_path('facility_icons'),  // Custom path in the 'public' folder
             'url' => env('APP_URL') . '/member',
             'visibility' => 'public',
         ],

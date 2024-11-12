@@ -14,7 +14,7 @@ class AddUserIdToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('user_id')->unique()->nullable();
+            $table->string('user_id')->unique()->nullable();  // Add user_id column
         });
     }
 
@@ -26,7 +26,7 @@ class AddUserIdToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn('user_id');  // Drop user_id column during rollback
         });
     }
 }

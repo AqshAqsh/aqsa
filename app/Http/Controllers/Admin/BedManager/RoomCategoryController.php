@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin\BedManager;
 
 use App\Http\Controllers\Controller;

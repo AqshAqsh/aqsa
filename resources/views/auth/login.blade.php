@@ -8,14 +8,14 @@
                 <div class="card-header">{{ __('Login') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="{{ route('auth.login.submit') }}">
                         @csrf
 
                         <div class="row mb-3">
-                            <label for="user_id" class="col-md-4 col-form-label text-md-end">{{ __('User  ID') }}</label>
+                            <label for="user_id" class="col-md-4 col-form-label text-md-end">{{ __('User ID') }}</label>
 
                             <div class="col-md-6">
-                                <input id="user_id" type="text" class="form-control @error('user_id') is-invalid @enderror" name="user_id" value="{{ old('user_id') }}" autofocus>
+                                <input id="user_id" type="text" class="form-control @error('user_id') is-invalid @enderror" name="user_id" value="{{ old('user_id') }}" autofocus autocomplete="username">
 
                                 @error('user_id')
                                 <span class="invalid-feedback" role="alert">
@@ -29,7 +29,7 @@
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}">
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" autocomplete="email">
 
                                 @error('email')
                                 <span class="invalid-feedback" role="alert">
@@ -79,6 +79,7 @@
                             </div>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>

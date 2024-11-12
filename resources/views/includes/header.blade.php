@@ -69,11 +69,15 @@
               <i class="mdi mdi-lock ml-1"></i>
             </a>
             @auth('admin')
-            <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{ route('admin.logout') }}">
-              <span>Log Out</span>
-              <i class="mdi mdi-logout ml-1"></i>
-            </a>
+            <form action="{{ route('admin.logout') }}" method="POST" style="display: inline;">
+              @csrf
+              <button type="submit" class="dropdown-item py-1 d-flex align-items-center justify-content-between" style="background: none; border: none; padding: 0;">
+                <span>Log Out</span>
+                <i class="mdi mdi-logout ml-1"></i>
+              </button>
+            </form>
             @endauth
+
           </div>
         </div>
       </li>

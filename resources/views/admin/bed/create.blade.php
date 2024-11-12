@@ -1,12 +1,8 @@
 @extends('layouts.admin-app')
 
-@section('title')
-Bed Create
-@endsection
-
 @section('content')
 <div class="content-wrapper">
-    <div class="row " id="proBanner">
+    <div class="row" id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
                 <h3>Bed Create</h3>
@@ -14,51 +10,61 @@ Bed Create
             </span>
         </div>
     </div>
-    <div class="row d-flex aling-items-center justify-content-center">
-        <div class="col-md-8 grid-margin stretch-card">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Create Bed Form</h4>
-                    <form method="POST" action="{{ route('admin.bed.store') }}" enctype="multipart/form-data" class="forms-sample">
-                        @csrf
-                        <div class="form-group row">
-                            <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Bed Number</label>
-                            <div class="col-sm-9">
-                                <input type="text" name="bed_no" class="form-control"
-                                    id="exampleInputUserbed_no2" placeholder="Enter Bed Number"
-                                    value="{{ old('bed_no') }}">
-                                @error('bed_no')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
                         </div>
-                        <div class="form-group row">
-                            <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Room</label>
-                            <div class="col-sm-9">
-                                <select name="room_id" id="" class="form-control">
-                                    <option value="">Select the Ropm</option>
-                                    @foreach ($rooms as $room)
-                                    <option value="{{ $room->id }}">{{ $room->room_no }}</option>
-                                    @endforeach
-                                </select>
-                                @error('room_id')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('admin.bed.store') }}">
+                        @csrf
+                        <div class="form-group">
+                            <label for="room_id">Room No</label>
+                            <select name="room_id" id="room_id" class="form-control" required>
+                                <option value="">Select a room</option>
+                                @foreach ($rooms as $room)
+                                    <option value="{{ $room->id }}" {{ old('room_id') == $room->id ? 'selected' : '' }}>
+                                        {{ $room->room_no }} ({{ $room->number_of_members }} members)
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if ($errors->has('room_id'))
+                                <span class="text-danger">{{ $errors->first('room_id') }}</span>
+                            @endif
                         </div>
 
-                        <div class="form-group row">
-                            <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Description</label>
-                            <div class="col-sm-9">
-                                <input type="text" name="description" class="form-control"
-                                    id="exampleInputUserdescription2" placeholder="Enter description"
-                                    value="{{ old('description') }}">
-                                @error('description')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <label for="bed_no">Number of Beds</label>
+                            <input type="number" name="bed_no" class="form-control" id="bed_no" value="{{ old('bed_no') }}" min="1" max="4" required>
+                            @if ($errors->has('bed_no'))
+                                <span class="text-danger">{{ $errors->first('bed_no') }}</span>
+                            @endif
                         </div>
-                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea name="description" class="form-control" id="description" rows="4" required>{{ old('description') }}</textarea>
+                            @if ($errors->has('description'))
+                                <span class="text-danger">{{ $errors->first('description') }}</span>
+                            @endif
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>

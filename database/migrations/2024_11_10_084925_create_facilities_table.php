@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBedsTable extends Migration
+class CreateFacilitiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateBedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('beds', function (Blueprint $table) {
+        Schema::create('facilities', function (Blueprint $table) {
             $table->id();
-            $table->string('bed_no');
-            $table->foreignId('room_id')->constrained('rooms')->cascadeOnDelete();
-            $table->longText('description');
+            $table->string('name'); // Name of the facility
+            $table->text('description')->nullable(); // Optional description
+            $table->string('icon')->nullable(); 
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateBedsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('beds');
+        Schema::dropIfExists('facilities');
     }
 }

@@ -13,9 +13,9 @@ use Illuminate\Support\Str;
 class RegisterController extends Controller
 {
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Register Controller
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     |
     | This controller handles the registration of new users as well as their
     | validation and creation. By default this controller uses a trait to
@@ -54,6 +54,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', 'in:user,admin'], // Make sure role is validated
         ]);
     }
 
@@ -65,13 +66,16 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // Generate a unique User ID
         $userID = 'USER-' . strtoupper(Str::random(8));
 
+        // Create the user with the role
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'user_id' => $userID,
+            'role' => $data['role'], // Set the role during user creation
         ]);
     }
 }

@@ -9,6 +9,13 @@ class RoomCategory extends Model
 {
     use HasFactory;
 
-    protected $table ='room_categories';
-    protected $fillable=['name'];
+    protected $table = 'room_categories';
+
+    protected $fillable = ['name'];
+
+    // Relationship to Room
+    public function rooms()
+    {
+        return $this->hasMany(Room::class, 'room_category_id');
+    }
 }

@@ -1,10 +1,11 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoomCategoriesTable extends Migration
+class CreateFacilityRoomTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +14,10 @@ class CreateRoomCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('room_categories', function (Blueprint $table) {
+        Schema::create('facility_room', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('facility_id')->constrained('facilities')->onDelete('cascade'); // Foreign key to facilities
+            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade'); // Foreign key to rooms            
             $table->timestamps();
         });
     }
@@ -27,6 +29,9 @@ class CreateRoomCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('room_categories');
+        Schema::dropIfExists('facility_room');
     }
 }
+
+
+

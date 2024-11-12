@@ -10,6 +10,19 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#notice" aria-expanded="false" aria-controls="notice">
         <span class="icon-bg"><i class="mdi mdi-crosshairs-gps menu-icon"></i></span>
+        <span class="menu-title">Booking</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="notice">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{{route('admin.bookings.list')}}">Booking List</a>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#notice" aria-expanded="false" aria-controls="notice">
+        <span class="icon-bg"><i class="mdi mdi-crosshairs-gps menu-icon"></i></span>
         <span class="menu-title">Member</span>
         <i class="menu-arrow"></i>
       </a>
@@ -63,6 +76,7 @@
             <a class="nav-link" href="{{ route('admin.room_category.list') }}">Category</a></li>
           <li class="nav-item"> <a class="nav-link" href="{{ route('admin.room.list') }}">Room</a></li>
           <li class="nav-item"> <a class="nav-link" href="{{ route('admin.bed.list') }}">Bed</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.facility.list') }}">Facility</a></li>
           <li class="nav-item"> <a class="nav-link" href="{{ route('admin.notice.create') }}">Assign
               Bed</a></li>
         </ul>

@@ -8,14 +8,43 @@ use Illuminate\Database\Eloquent\Model;
 class Bed extends Model
 {
     use HasFactory;
-    protected $table='beds';
 
-    protected $fillable=[
+    protected $table = 'beds';
+
+    protected $fillable = [
         'bed_no',
         'room_id',
         'description',
+        'is_occupied',
     ];
-    public function room(){
-        return $this->belongsTo(Room::class,'room_id');
+
+    // Relationship to Room
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id', 'id');
+    }
+
+    // Relationship to Bookings
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    // Check if the bed is available
+    public function isAvailable()
+    {
+        return !$this->is_occupied; // Returns true if the bed is not occupied
+    }
+
+    // Mark the bed as occupied
+    public function markAsOccupied()
+    {
+        $this->update(['is_occupied' => true]);
+    }
+
+    // Mark the bed as available
+    public function markAsAvailable()
+    {
+        $this->update(['is_occupied' => false]);
     }
 }
