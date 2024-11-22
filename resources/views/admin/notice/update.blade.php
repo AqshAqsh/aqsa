@@ -22,6 +22,7 @@
                         <form method="POST" action="{{ route('admin.notice.update',['id'=>$notices->id]) }}" enctype="multipart/form-data"
                             class="forms-sample">
                             @csrf
+                            @method('PUT')
                             <div class="form-group row">
                                 <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Title</label>
                                 <div class="col-sm-9">

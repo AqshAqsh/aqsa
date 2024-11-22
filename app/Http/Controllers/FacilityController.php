@@ -15,6 +15,13 @@ class FacilityController extends Controller
         $facilities = Facility::with('rooms')->get();
         return view('admin.facility.list', compact('facilities'));
     }
+    public function facilitiesview()
+    {
+        // Fetch all facilities for the public view
+        $facilities = Facility::latest()->get();
+        return view('facilities', compact('facilities'));
+    }
+
 
     public function create()
     {
@@ -66,8 +73,11 @@ class FacilityController extends Controller
         return view('admin.facility.update', compact('facility', 'rooms'));
     }
 
-    public function update(Request $request, Facility $facility)
+    public function update(Request $request, $id)
     {
+        // Retrieve the facility
+        $facility = Facility::findOrFail($id);
+
         // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
@@ -97,12 +107,15 @@ class FacilityController extends Controller
         ]);
 
         // Sync associated rooms
-        $facility->rooms()->sync($request->room_ids);
+        if ($request->has('room_ids')) {
+            $facility->rooms()->sync($request->room_ids);
+        }
 
         return redirect()->route('admin.facility.list')->with('success', 'Facility updated successfully.');
     }
 
-    public function destroy(Facility $facility)
+
+    public function delete(Facility $facility)
     {
         // Delete facility and its icon if it exists
         if ($facility->icon) {
@@ -117,10 +130,4 @@ class FacilityController extends Controller
         return redirect()->route('admin.facility.list')->with('success', 'Facility deleted successfully.');
     }
 
-    public function facilitiesview()
-    {
-        // Fetch all facilities for the public view
-        $facility = Facility::latest()->get();
-        return view('facilities', compact('facility'));
-    }
 }

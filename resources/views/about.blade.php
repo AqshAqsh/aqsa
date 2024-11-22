@@ -15,7 +15,7 @@
 </style>
 
 
-<title>Reside Me _ About</title>
+<title>ResideMe _ About</title>
 
 <body class="bg-light">
     <div class="my-5 px-4">
@@ -45,7 +45,7 @@
             <div class="col-lg-3 col-md-6 mb-4 px-4">
                 <div class="bg-white rounded shdow p-4 border-top border-4 text-center box">
                     <img src="{{asset('images/hotel.svg')}}" alt="" width="70px">
-                    <h2 class="mt-3">100+ Rooms</h2>
+                    <h2 class="mt-3">75+ Rooms</h2>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4 px-4">
@@ -57,13 +57,13 @@
             <div class="col-lg-3 col-md-6 mb-4 px-4">
                 <div class="bg-white rounded shdow p-4 border-top border-4 text-center box">
                     <img src="{{asset('images/customers.svg')}}" alt="" width="70px">
-                    <h2 class="mt-3">200+ customers</h2>
+                    <h3 class="mt-3">300+ customers</h3>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4 px-4">
                 <div class="bg-white rounded shdow p-4 border-top border-4 text-center box">
                     <img src="{{asset('images/rating.svg')}}" alt="" width="70px">
-                    <h2 class="mt-3">150+ Reviews</h2>
+                    <h2 class="mt-3">250+ Reviews</h2>
                 </div>
             </div>
         </div>

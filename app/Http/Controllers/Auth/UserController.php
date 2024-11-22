@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Models\Notices;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -35,84 +37,75 @@ class UserController extends Controller
 
         // Create the new user
         $user = new User();
-        $user->user_id = 'USER-' . strtoupper(Str::random(8)); // Adjust this if needed
+        $user->user_id = 'USER-' . strtoupper(Str::random(8)); // Generate unique user_id
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        $user->password = Hash::make($request->input('password')); // Use Hash::make for password
+        $user->password = Hash::make($request->input('password')); // Hash the password
         $user->role = $request->input('role'); // Set the role
         $user->save();
 
         return redirect()->route('admin.user.list')->with('success', 'User registered successfully!');
     }
 
-    public function edit($id)
+    public function edit($user_id)
     {
-        $user = User::findOrFail($id); // Find the user by ID
-        return view('admin.user.edit', compact('user')); // Return the edit view
+        $user = User::where('user_id', $user_id)->firstOrFail(); // Find user by user_id
+        return view('admin.user.update', compact('user'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $user_id)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'email' => 'required|email|max:255|unique:users,email,' . $user_id . ',user_id',
             'password' => 'nullable|string|min:6', // Optional for updating password
             'role' => 'required|string|in:user,admin', // Ensure role is validated
         ]);
 
-        $user = User::findOrFail($id); // Find user by ID
+        $user = User::where('user_id', $user_id)->firstOrFail(); // Find user by user_id
 
         $user->name = $request->input('name');
         $user->email = $request->input('email');
 
         // Only update password if provided
         if ($request->input('password')) {
-            $user->password = Hash::make($request->input('password')); // Hash new password
+            $user->password = Hash::make($request->input('password'));
         }
 
-        $user->role = $request->input('role'); // Set the role
+        $user->role = $request->input('role');
         $user->save();
 
         return redirect()->route('admin.user.list')->with('success', 'User updated successfully!');
     }
 
-    public function delete($id)
+    public function delete($user_id)
     {
-        $user = User::findOrFail($id); // Find user by ID
-        $user->delete(); // Delete the user
-        return redirect()->route('admin.user.list')->with('success', 'User deleted successfully!');
+        $user = User::where('user_id', $user_id)->first();
+
+        if ($user) {
+            $user->delete();
+            return redirect()->route('admin.user.list')->with('success', 'User deleted successfully!');
+        }
+
+        return redirect()->route('admin.user.list')->with('error', 'User not found');
     }
+
+    public function showNotice()
+    {
+        $user = auth()->user();
+        $notifications = $user->notifications; // Fetch all notifications for the logged-in user
+        $activeNotices = Notices::active()->get(); // Get active notices
+
+        // Pass the correct variable to the view
+        return view('notice', compact('user', 'notifications', 'activeNotices'));
+    }
+
     public function showProfile()
     {
         $user = auth()->user(); // Get logged-in user data
         return view('profile', compact('user'));
     }
-    public function showinbox()
-    {
-        $user = auth()->user(); // Get logged-in user data
-        return view('bookingrequestresponse', compact('user'));
-    }
-    public function markAsRead($notificationId)
-{
-    // Check if the user is authenticated
-    if (!auth()->check()) {
-        return redirect()->route('login')->with('error', 'You need to be logged in to perform this action.');
-    }
 
-    // Attempt to find the notification
-    try {
-        $notification = auth()->user()->notifications()->findOrFail($notificationId);
-        $notification->markAsRead();
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return redirect()->back()->with('error', 'Notification not found.');
-    } catch (\Exception $e) {
-        // Log the error for debugging
-        Log::error('Error marking notification as read: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'An error occurred while marking the notification as read.');
-    }
-
-    return redirect()->back()->with('success', 'Notification marked as read successfully.');
-}
     public function updateProfile(Request $request)
     {
         // Validate input data
@@ -136,13 +129,14 @@ class UserController extends Controller
             'guardian_address' => 'required|string',
         ]);
 
-        // Get the logged-in user
+        // Get the logged-in user and explicitly type hint it
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         // Update only the allowed fields
         $user->update($request->only([
-            'full_name',           
-            'gender',           
+            'full_name',
+            'gender',
             'date_of_birth',
             'contact_number',
             'permanent_address',
@@ -163,5 +157,29 @@ class UserController extends Controller
 
         // Redirect to the profile page with success message
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
+    }
+    public function showNotifications()
+    {
+        // Fetch notifications for the authenticated user
+        $notifications = Auth::user()->notifications;
+
+        // Return view with notifications data
+        return view('notifications', compact('notifications'));
+    }
+
+
+    public function markAsRead($notificationId)
+    {
+        // Get the notification by ID
+        $notification = Auth::user()->notifications()->where('id', $notificationId)->first();
+
+        // If the notification exists, mark it as read
+        if ($notification) {
+            $notification->markAsRead();
+            return back()->with('success', 'Notification marked as read.');
+        }
+
+        // If notification is not found
+        return back()->with('error', 'Notification not found.');
     }
 }

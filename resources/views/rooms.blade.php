@@ -10,7 +10,96 @@
         border: 1px solid var(--teal);
     }
 </style>
-<title>Reside Me - Rooms</title>
+<title>ResideMe - Rooms</title>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-1 col-md-12 px-4"></div>
+
+        <div class="col-lg-10 col-md-12 px-4">
+            <div class="card mb-5 border-0 shadow">
+                <div class="row g-0 p-1 align-items-center">
+                    @if(auth()->check()) <!-- Check if the user is logged in -->
+                    <span class="d-flex align-items-center">
+                        @if(isset($booking)) <!-- Check if there is a booking available -->
+                        @if(strtolower(trim($booking->status)) === 'deleted') <!-- Check if the booking is marked as deleted -->
+                        <div class="col-md-7 px-lg-2 px-md-2 px-0">
+                            <h6>Your previous booking request has been deleted.</h6>
+                            <!-- Check if the user has a new booking that is pending or approved -->
+                            @php
+                            $newBooking = \App\Models\Booking::where('user_id', auth()->user()->user_id)
+                            ->whereIn('status', ['pending', 'approved'])
+                            ->where('id', '!=', $booking->id) // Exclude the current deleted booking
+                            ->first();
+                            @endphp
+                            @if($newBooking) <!-- If a new booking exists -->
+                            <h6>You have made a new booking request:</h6>
+                        </div>
+                        <div class="col-md-3 mt-lg-0 mt-md-0 mt-4 text-center">
+
+                            <a href="{{ route('room.showbooking', $newBooking->id) }}" class="btn btn-warning" style="background-color: #010142;">View New Booking Request</a>
+                        </div>
+                        @else <!-- If no new booking exists -->
+                        <div class="col-md-7 px-lg-2 px-md-2 px-0">
+
+                            <h6>No new bookings have been made yet.</h6>
+                        </div>
+                        @endif
+
+                        @elseif(strtolower(trim($booking->status)) === 'rejected') <!-- Check if the booking is marked as rejected -->
+                        <div class="col-md-7 px-lg-2 px-md-2 px-0">
+                            <h6>Your previous booking request was rejected.</h6>
+                            <!-- Check if the user has a new booking that is pending or approved -->
+                            @php
+                            $newBooking = \App\Models\Booking::where('user_id', auth()->user()->user_id)
+                            ->whereIn('status', ['pending', 'approved'])
+                            ->where('id', '!=', $booking->id) // Exclude the current rejected booking
+                            ->first();
+                            @endphp
+                            @if($newBooking) <!-- If a new booking exists -->
+                            <h6>You have made a new booking request:</h6>
+                        </div>
+                        <div class="col-md-3 mt-lg-0 mt-md-0 mt-4 text-center">
+
+                            <a href="{{ route('room.showbooking', $newBooking->id) }}" class="btn btn-warning" style="background-color: #010142;">View New Booking Request</a>
+                        </div>
+                        @else <!-- If no new booking exists -->
+                        <div class="col-md-10 px-lg-2 px-md-2 px-0">
+
+                            <h6>No new bookings have been made yet.</h6>
+                        </div>
+                        @endif
+
+                        @else <!-- If the booking is neither deleted nor rejected, show the current booking -->
+                        <div class="col-md-7 px-lg-2 px-md-2 px-0">
+                            <h6>Check your current booking request:</h6>
+                        </div>
+                        <div class="col-md-3 mt-lg-0 mt-md-0 mt-4 text-center">
+
+
+                            <a href="{{ route('room.showbooking', $booking->id) }}" class="btn custom-bg" style="background-color: #D5AF07;">Booking Request View</a>
+                        </div>
+                        @endif
+                        @else
+                        <div class="col-md-10 px-lg-2 px-md-2 px-0">
+
+                            <h6>You have not made a booking yet.</h6>
+                        </div>
+                        @endif
+                    </span>
+                    @else
+                    <div class="col-md-10 px-lg-2 px-md-2 px-0">
+
+                        <h6>Please log in to view and manage your booking request.</h6> <!-- Message if user is not logged in -->
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div class="bg-light">
     <div class="my-5 px-4">
@@ -28,36 +117,8 @@
                             <span class="navbar-toggler-icon"></span>
                         </button>
                         <div class="collapse navbar-collapse flex-column mt-2 align-items-stretch" id="filterdropdown">
-                            <div class="border bg-light p-3 rounded mb-3">
-                                <h5 class="mb-3" style="font-size: 18px;">CHECK AVAILABILITY</h5>
-                                <h5 class="mb-3" style="font-size: 18px;">FACILITIES</h5>
-                                @foreach (['one', 'two', 'three', 'four', 'five'] as $facility)
-                                <div class="mb-2">
-                                    <input type="checkbox" id="f{{ $facility }}" class="form-check-input shadow-none me-1">
-                                    <label class="form-check-label" for="f{{ $facility }}">FACILITY {{ $facility }}</label>
-                                </div>
-                                @endforeach
-                                <div class="d-flex">
-                                    <div class="me-3">
-                                        <label class="form-label">Members</label>
-                                        <input type="number" class="form-control shadow-none">
-                                    </div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="me-3">
-                                        <label class="form-label">Building Storey</label>
-                                        <input type="number" class="form-control shadow-none">
-                                    </div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="me-3">
-                                        <label class="form-label">Room No</label>
-                                        <input type="number" class="form-control shadow-none">
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
-                    </div>
                 </nav>
             </div>
 
@@ -70,9 +131,9 @@
                         </div>
                         <div class="col-md-5 px-lg-3 px-md-3 px-0">
                             <h5 class="mb-3">{{ $room->room_no }} - {{ $room->category->name }}</h5>
-                            <!-- Facilities Section -->
+                            <!-- facilities Section -->
                             <div class="facilities mb-3">
-                                <h6 class="mb-1">Facilities</h6>
+                                <h6 class="mb-1">facilities</h6>
                                 @if($room->facilities && $room->facilities->isNotEmpty())
                                 @foreach ($room->facilities as $facility)
                                 <span class="badge rounded-pill bg-light text-dark text-wrap">{{ $facility->name }}</span>
@@ -84,39 +145,51 @@
 
                             <div class="Guests">
                                 <div class="row mb-2">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-5">
+                                        <h6 class="mt-2">Building Block</h6>
+                                        <span class="badge rounded-pill bg-light text-dark text-wrap">
+                                            {{ $room->block->block_name }} Block
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <h6 class="mt-2">Guests</h6>
                                         <span class="badge rounded-pill bg-light text-dark text-wrap">
                                             {{ $room->number_of_members }} Members
                                         </span>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-3">
                                         <h6 class="mt-2">Beds</h6>
                                         <span class="badge rounded-pill bg-light text-dark text-wrap">
-                                            {{ $room->beds_count }} Beds
+                                            {{ $room->beds->count() }} Beds
                                         </span>
                                     </div>
-
-
                                 </div>
                             </div>
+
                             <div class="description">
                                 <h6 class="mt-1">Description</h6>
                                 <span class="badge rounded-pill bg-light text-dark text-wrap">
                                     {{ $room->description }}
                                 </span>
-
                             </div>
+                            
 
+                            <!-- Show availability
+                            @if ($room->beds->isEmpty())
+                            <p>No booking available yet</p>
+                            @else
+                            <p>Room Available</p>
+                            @endif-->
                         </div>
                         <div class="col-md-2 mt-lg-0 mt-md-0 mt-4 text-center">
-                            <h5 class="mb-4">RS.{{ $room->room_charge }}  Per Day</h5>
-                            <a href="{{ route('room.booking', $room->id) }}" class="btn btn-sm text-white bg-warning shadow-none w-100 mb-2">Book Now</a>
+                            <h5 class="mb-4">RS.{{ $room->room_charge }} Per Month</h5>
+                            <a href="{{ route('room.booking', ['room_no' => $room->room_no]) }}" class="btn btn-sm text-white bg-warning shadow-none w-100 mb-2">Request For Booking</a>
                             <a href="{{ route('room.details', $room->id) }}" class="btn btn-sm btn-outline-dark shadow-none w-100">More Details</a>
                         </div>
                     </div>
                 </div>
                 @endforeach
+
             </div>
         </div>
     </div>

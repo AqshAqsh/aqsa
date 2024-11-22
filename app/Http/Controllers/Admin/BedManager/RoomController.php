@@ -155,8 +155,15 @@ class RoomController extends Controller
 
     public function showRooms()
     {
-        $rooms = Room::with('category')->withCount('beds')->with('facilities')->latest()->get();
-        return view('rooms', compact('rooms'));
+
+        $rooms = Room::with(['category', 'facilities', 'beds'])
+            ->whereHas('beds', function ($query) {
+                $query->where('is_occupied', 0);  // Check for beds that are not occupied
+            })
+            ->latest()
+            ->get();
+        $booking = Booking::where('user_id', auth()->id())->first();
+        return view('rooms', compact('rooms', 'booking'));
     }
 
     public function showRoomDetails($id)

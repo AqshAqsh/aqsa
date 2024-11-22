@@ -5,7 +5,7 @@
     <div class="row" id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>Create User</h3>
+                <h3>Create User </h3>
                 <a href="{{ route('admin.user.list') }}" class="btn purchase-button">Go Back</a>
             </span>
         </div>

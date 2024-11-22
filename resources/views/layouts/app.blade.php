@@ -8,6 +8,8 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
     @include('layouts.links')
+    <link rel="shortcut icon" href="{{ asset('images/logo.jpg') }}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -18,6 +20,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 
 <body class="bg-light">
@@ -25,7 +28,9 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-3 py-lg-2 shadow-sm sticky-top">
             <div class="container-fluid">
-                <a class="navbar-brand me-5 fw-bold fs-3 h-font" href="#"><b>Reside Me</b></a>
+                <a class="navbar-brand me-5 fw-bold fs-3 h-font" href="{{ url('/') }}">
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Logo" style="height: 50px; width:55px"><b>ResideMe</b>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -54,6 +59,7 @@
                             <a href="{{ route('auth.login') }}" class="btn btn-outline-dark shadow-none me-3 me-lg-2">Login</a>
                         </li>
                         @else
+                        
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="nav-profile-img">
@@ -64,9 +70,10 @@
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <h2 class="dropdown-header text-uppercase pl-2 text-dark">User  Options</h2>
+                                <h2 class="dropdown-header text-uppercase pl-2 text-dark">User Options</h2>
+                                <li><a class="dropdown-item" href="{{ route('notice') }}">{{ __('NoticeBoard') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.show') }}">{{ __('Profile') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('bookingrequestresponse.show') }}">{{ __('Notifications') }}</a></li>
+                                <li><a class="dropdown-item" href="{{  route('notifications')  }}">{{ __('Alerts') }}</a></li>
                                 <div class="dropdown-divider"></div>
                                 <li>
                                     <a class="dropdown-item" href="{{ route('user.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
@@ -75,9 +82,29 @@
                                     </form>
                                 </li>
                             </ul>
+
                         </li>
-                        @endguest </ul>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                            <h6 class="p-3 mb-0 bg-primary text-white py-4">Notifications</h6>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-success">
+                                        <i class="mdi mdi-calendar"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                                    <h6 class="preview-subject font-weight-normal mb-1">Event today</h6>
+                                    <p class="text-gray ellipsis mb-0"> Just a reminder that you have an event today </p>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <h6 class="p-3 mb-0 text-center">See all notifications</h6>
+                        </div>
+                        @endguest
+                    </ul>
                 </div>
+
             </div>
         </nav>
 
@@ -86,13 +113,29 @@
             @yield('content')
         </main>
     </div>
-    
+
     <!-- Bootstrap Bundle JS (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ mix('js/app.js') }}"></script>
-    
+    <script src="{{ asset('js/app.js') }}"></script>
+
     <!-- Footer -->
     @include('layouts.footer')
+
+    <!-- JavaScript to generate unique session_id per tab -->
+    <script>
+        // Check if session_id is already stored in localStorage
+        if (!localStorage.getItem('session_id')) {
+            // Generate a unique session ID based on the timestamp
+            localStorage.setItem('session_id', 'tab_' + Date.now());
+        }
+
+        // Retrieve the session ID
+        let sessionId = localStorage.getItem('session_id');
+        console.log('Session ID for this tab:', sessionId); // Check it in the console
+
+        // Optionally, you can send this session ID with AJAX requests or form submissions
+        // For example, you can attach it to an HTTP request header or include it in your form data
+    </script>
 </body>
 
 </html>

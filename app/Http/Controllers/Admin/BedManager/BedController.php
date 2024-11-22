@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\BedManager;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Bed;
 use App\Models\Room;
@@ -62,43 +63,16 @@ class BedController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Define the maximum limit for beds per room
-        $maxBedsPerRoom = 4;
-
-        // Validate the request
+        // Validate only description as bed_no and room_id are not editable
         $validate = $request->validate([
-            'bed_no' => 'required|integer|min:1|max:4', // Add max validation here
-            'room_id' => 'required|exists:rooms,id', // Ensure room_id matches room_id in rooms table
             'description' => 'required|string|max:255',
         ]);
 
-        // Get the current bed's room to check how many beds are currently in that room
-        $currentBed = Bed::findOrFail($id);
-        $currentRoomNo = $currentBed->room_id;
+        // Find the bed to update
+        $bed = Bed::findOrFail($id);
 
-        // Check if the room is changing
-        if ($currentRoomNo !== $validate['room_id']) {
-            // Check if adding this bed exceeds the limit
-            if (!$this->canAddMoreBeds($validate['room_id'], 1)) {
-                return redirect()->back()->withErrors(['error' => 'Cannot add more beds. The maximum limit is ' . $maxBedsPerRoom . ' beds per room.']);
-            }
-        }
-
-        // Update the bed record
-        $currentBed->update($validate);
-
-        // Update the number of members for the room if the room has changed
-        if ($currentRoomNo !== $validate['room_id']) {
-            // Update the old room's member count
-            $oldRoom = Room::find($currentRoomNo);
-            $oldRoom->number_of_members -= 1; // Decrease by 1 since this bed is removed from the old room
-            $oldRoom->save();
-
-            // Update the new room's member count
-            $newRoom = Room::find($validate['room_id']);
-            $newRoom->number_of_members += 1; // Increase by 1 since this bed is added to the new room
-            $newRoom->save();
-        }
+        // Update the description only
+        $bed->update($validate);
 
         return redirect()->route('admin.bed.list')->with('success', 'Bed record successfully updated');
     }
@@ -106,16 +80,33 @@ class BedController extends Controller
     public function delete($id)
     {
         $bed = Bed::findOrFail($id);
-        $room = Room::find($bed->room_id);
 
-        // Decrease the number of members in the room
-        $room->number_of_members -= 1;
-        $room->save();
+        // Check if the bed is occupied
+        if ($bed->is_occupied) {
+            return redirect()->route('admin.bed.list')->with('error', 'This bed is currently occupied and cannot be deleted.');
+        }
+
+        // Check if there is an active booking for this bed (booking exists but not occupied)
+        $booking = $bed->booking()->where('status', 'pending')->first();  // Assuming 'status' column tracks booking requests
+
+        if ($booking) {
+            return redirect()->route('admin.bed.list')->with('error', 'A booking request is made for this bed. Please reject the booking request first before deleting the bed.');
+        }
+
+        // Check if the bed has an associated room and reduce the number of members
+        $room = Room::find($bed->room_id);
+        if ($room) {
+            $room->number_of_members -= 1;  // Decrease by one bed
+            $room->save();
+        }
 
         // Delete the bed record
         Bed::destroy($id);
+
         return redirect()->route('admin.bed.list')->with('success', 'Bed record successfully deleted');
     }
+
+
 
     private function canAddMoreBeds($roomId, $additionalBeds)
     {
@@ -124,5 +115,20 @@ class BedController extends Controller
         $maxBedsPerRoom = 4;
 
         return $newBedCount <= $maxBedsPerRoom;
+    }
+    public function assign($bedId)
+    {
+        $bed = Bed::find($bedId);
+
+        if (!$bed) {
+            return redirect()->back()->with('error', 'Bed not found.');
+        }
+
+        // Proceed with the assignment logic
+        $bed->is_occupied = true;
+        $bed->user_id = Auth::id();  // Assuming you want to assign the bed to the current logged-in admin user
+        $bed->save();
+
+        return redirect()->route('admin.beds.assigned')->with('success', 'Bed successfully assigned.');
     }
 }

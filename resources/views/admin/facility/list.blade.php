@@ -35,7 +35,7 @@ Facility List
                                 <td>{{ $facility->id }}</td>
                                 <td>
                                     @if($facility->icon)
-                                    <img src="{{ Storage::url($facility->icon) }}" alt="{{ $facility->name }}" style="width: 20px; height: 20px; margin-right: 5px;">
+                                    <img src="{{ asset('storage/' . $facility->icon) }}" alt="{{ $facility->name }}" width="50" height="50">
                                     @endif
                                     {{ $facility->name }}
                                 </td>

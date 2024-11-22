@@ -11,7 +11,8 @@ class User extends Authenticatable
 {
     const ROLE_ADMIN = 'admin';
     const ROLE_USER = 'user';
-    use HasFactory, Notifiable;
+    use Notifiable;
+    use HasFactory;
 
     /**
      * @var string
@@ -27,14 +28,15 @@ class User extends Authenticatable
      * @var array
      */
     public $incrementing = false;
+    protected $keyType = 'string';  
     protected $fillable = [
         'name',
         'email',
         'password',
         'user_id',
         'role',
-        'full_name',           // Add this if you want to allow 'full_name' to be updated
-        'gender',              // Add this for 'gender' field
+        'full_name',           
+        'gender',              
         'date_of_birth',
         'contact_number',
         'permanent_address',
@@ -83,5 +85,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Feedback::class, 'user_id', 'user_id');
     }
-    
+    public function notifications()
+    {
+        return $this->morphMany(\Illuminate\Notifications\DatabaseNotification::class, 'notifiable');
+    }
+    public function beds()
+    {
+        return $this->hasone(Bed::class);
+    }
 }

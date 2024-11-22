@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Reside Me _ contactus')
+@section('title', 'ResideMe _ contactus')
 @section('content')
 <!DOCTYPE html>
 <html lang="en">
@@ -39,11 +39,11 @@
                     </a>
                     <h5>CALL US</h5>
                     <i class="bi bi-telephone-fill"></i>
-                    <a href="tel:+923127557097" class="d-inline-block mb-2 text-decoration-none text-dark">+923127557097</a>
+                    <a href="tel:+923127557097" class="d-inline-block mb-2 text-decoration-none text-dark">+920000000097</a>
 
                     <h5 class="mt-4">Email</h5>
                     <a href="mailto:aqshaqsh01234@gmail.com" class="d-line-block text-decoration-none text-dark ">
-                        <i class="bi bi-envelope-fill"></i> aqshaqsh1234@gmail.com
+                        <i class="bi bi-envelope-fill"></i> aqshaqsh34@gmail.com
                     </a>
 
                     <h5 class="mt-4">Follow US</h5>
@@ -58,12 +58,11 @@
                     <form action="{{ route('feedback.store') }}" method="POST">
                         @csrf
                         <div class="container">
-                            @if($user)
-                            <h1>Welcome, {{ $user->name }}</h1>
+                            @if(Auth::check())
+                            <h1>Welcome, {{ Auth::user()->name }}</h1>
                             @else
                             <h1>Welcome, Guest</h1>
                             @endif
-
 
                             <div class="form-group">
                                 <label for="message">Your Feedback:</label>
@@ -74,26 +73,27 @@
                             </div>
 
                             <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                        </div>
                     </form>
 
                     <h2>Your Feedback Status</h2>
                     <div>
-                        @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                        @endif
-
-                        @if(isset($user->feedback) && !empty($user->feedback))
-                        <p>Feedback: {{ $user->feedback }}</p>
+                        @if(Auth::check() && Auth::user()->feedbacks->count() > 0)
+                        <ul class="list-group">
+                            @foreach(Auth::user()->feedbacks as $feedback)
+                            <li class="list-group-item">
+                                <strong>Message:</strong> {{ $feedback->message }} <br>
+                                <strong>Status:</strong> {{ $feedback->status }}
+                            </li>
+                            @endforeach
+                        </ul>
                         @else
-                        <p>No feedback available.</p>
+                        <p>No feedback submitted yet.</p>
                         @endif
-
                     </div>
                 </div>
-                </form>
             </div>
         </div>
-    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

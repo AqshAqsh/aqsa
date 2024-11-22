@@ -50,8 +50,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => public_path('facility_icons'),  // Custom path in the 'public' folder
-            'url' => env('APP_URL') . '/member',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
 

@@ -16,12 +16,18 @@ class Bed extends Model
         'room_id',
         'description',
         'is_occupied',
+        'user_id',
+        'status',
     ];
 
     // Relationship to Room
     public function room()
     {
         return $this->belongsTo(Room::class, 'room_id', 'id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     // Relationship to Bookings
@@ -46,5 +52,10 @@ class Bed extends Model
     public function markAsAvailable()
     {
         $this->update(['is_occupied' => false]);
+    }
+    // In Bed Model
+    public function booking()
+    {
+        return $this->hasOne(Booking::class); // Adjust according to your relationship
     }
 }

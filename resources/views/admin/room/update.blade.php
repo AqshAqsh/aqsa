@@ -21,6 +21,7 @@ Room Update
                     <h4 class="card-title">Update Room</h4>
                     <form method="POST" action="{{ route('admin.room.update', $room->id) }}" enctype="multipart/form-data" class="forms-sample">
                         @csrf
+                        @method('PUT')
                         
                         <div class="form-group row">
                             <label for="room_no" class="col-sm-3 col-form-label">Room No</label>

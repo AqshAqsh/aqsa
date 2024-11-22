@@ -25,22 +25,25 @@ Bed Update
                         @csrf
                         @method('PUT') <!-- Adding method spoofing for PUT request -->
 
+                        <!-- Bed Number (Read-only) -->
                         <div class="form-group row">
                             <label for="bed_no" class="col-sm-3 col-form-label">Bed Number</label>
                             <div class="col-sm-9">
-                                <input type="number" name="bed_no" class="form-control"
+                                <input type="text" name="bed_no" class="form-control"
                                     id="bed_no" placeholder="Enter Bed Number"
-                                    value="{{ old('bed_no', $bed->bed_no) }}" min="1" max="4" required>
+                                    value="{{ old('bed_no', $bed->bed_no) }}" min="1" max="4" required disabled>
                                 @error('bed_no')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
 
+
+                        <!-- Room (Disabled) -->
                         <div class="form-group row">
                             <label for="room_id" class="col-sm-3 col-form-label">Room</label>
                             <div class="col-sm-9">
-                                <select name="room_id" id="room_id" class="form-control" required>
+                                <select name="room_id" id="room_id" class="form-control" disabled>
                                     <option value="">Select the Room</option>
                                     @foreach ($rooms as $room)
                                     <option value="{{ $room->id }}" {{ $room->id == $bed->room_id ? 'selected' : '' }}>{{ $room->room_no }}</option>
@@ -52,6 +55,7 @@ Bed Update
                             </div>
                         </div>
 
+                        <!-- Description (Editable) -->
                         <div class="form-group row">
                             <label for="description" class="col-sm-3 col-form-label">Description</label>
                             <div class="col-sm-9">

@@ -10,7 +10,7 @@
     <div class="row" id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>User Records</h3>
+                <h3>User Records </h3>
                 <a href="{{ route('admin.user.create') }}" class="btn purchase-button">Add New</a>
             </span>
         </div>
@@ -35,8 +35,18 @@
                     <td>{{ $value->email }}</td>
                     <td>********</td> <!-- Masked Password for security -->
                     <td>
-                        <a href="{{ route('admin.user.delete', $value->id) }}" class="btn btn-danger p-1" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
-                        <a href="{{ route('admin.user.edit', $value->id) }}" class="btn btn-primary p-1">Edit</a>
+                        <a class="btn btn-danger p-1">
+
+                            <form action="{{ route('admin.user.delete', $value->user_id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger p-1">Delete</button>
+                            </form>
+                        </a>
+                        <a href="{{ route('admin.user.update', $value->user_id) }}" class="btn btn-primary p-2">Edit</a>
+
+
+
                     </td>
                 </tr>
                 @endforeach
@@ -45,4 +55,34 @@
         </table>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        // Handle click event on the delete button
+        $('.delete-user-btn').click(function() {
+            // Get the user ID from the button's data attribute
+            var userId = $(this).data('id');
+
+            // Confirm deletion
+            if (confirm('Are you sure you want to delete this user?')) {
+                // AJAX request to delete user
+                $.ajax({
+                    url: '/admin/user/delete/' + userId,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        alert('User deleted successfully');
+                        // Optionally, remove the user row from the table
+                        $('#user-' + userId).remove();
+                    },
+                    error: function(xhr) {
+                        alert('Error deleting user');
+                    }
+                });
+            }
+        });
+
+    });
+</script>
 @endsection

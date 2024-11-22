@@ -1,24 +1,28 @@
-.root{
-    --teal:  #2ec1ac;
-    --teal-hover: #279e8c;
+.root {
+    --teal: #D5AF07;
+    --teal-hover: #EEC216;
 }
 
 .custom-bg {
-    background-color: var(--teal) !important;
-    border: 1px solid var(--teal) !important;
+    background-color: var(--teal);
+    border: 1px solid var(--teal);
 }
+
 .custom-bg:hover {
-    background-color: var(--teal-hover) !important;
-    border-color: var(--teal-hover) !important;
+    background-color: var(--teal-hover);
+    border-color: var(--teal-hover);
 }
 
 
-*{
-    font-family: 'Poppins', sans-serif; 
+
+* {
+    font-family: 'Poppins', sans-serif;
 }
-.h-font{
+
+.h-font {
     font-family: 'Merienda', cursive;
 }
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -26,13 +30,15 @@ input::-webkit-inner-spin-button {
 }
 
 input[type=number] {
+    -webkit-appearance: none;
     -moz-appearance: textfield;
+    appearance: none;
 }
 
 
 
-.h-line{
-    width: 150px; 
+.h-line {
+    width: 150px;
     margin: 0 auto;
     height: 1.7px;
 }

@@ -1,5 +1,5 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);
 @charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Nunito);
 /*!
  * Bootstrap  v5.3.3 (https://getbootstrap.com/)
  * Copyright 2011-2024 The Bootstrap Authors
@@ -488,14 +488,17 @@ button,
 [type=button],
 [type=reset],
 [type=submit] {
-  -webkit-appearance: button;
-}
-button:not(:disabled),
-[type=button]:not(:disabled),
-[type=reset]:not(:disabled),
-[type=submit]:not(:disabled) {
+  appearance: none; /* Reset appearance for all browsers */
+  -webkit-appearance: button; /* Apply for Webkit browsers */
+  display: inline-block;
+  padding: 0.5em 1em;
   cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+  border-radius: 0.25rem;
 }
+
 
 ::-moz-focus-inner {
   padding: 0;
@@ -545,9 +548,11 @@ legend + * {
 }
 
 [type=search] {
-  -webkit-appearance: textfield;
-  outline-offset: -2px;
+  appearance: textfield; /* Standard property */
+  -webkit-appearance: textfield; /* Vendor prefix for WebKit browsers */
+  outline-offset: -2px; /* Custom outline behavior */
 }
+
 
 /* rtl:raw:
 [type="tel"],
@@ -566,9 +571,11 @@ legend + * {
 }
 
 ::file-selector-button {
-  font: inherit;
-  -webkit-appearance: button;
+  font: inherit; /* Inherit the font style */
+  appearance: button; /* Standardized property for button appearance */
+  -webkit-appearance: button; /* For WebKit browsers like Safari and older Chrome versions */
 }
+
 
 output {
   display: inline-block;
@@ -3379,6 +3386,14 @@ textarea.form-control-lg {
 }
 .dropdown-toggle:empty::after {
   margin-left: 0;
+}
+#proBanner {
+  display: block; /* Ensure it's visible by default */
+}
+.btn-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .dropdown-menu {

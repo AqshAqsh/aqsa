@@ -32,13 +32,15 @@ class LoginController extends Controller
         return redirect()->back()->withErrors('Login failed');
     }
     // Handle user logout
-    public function userLogout(Request $request): \Illuminate\Http\RedirectResponse
+    public function userLogout(Request $request)
     {
-        Auth::guard('web')->logout();
+        // Log out the current user
+        Auth::logout();
 
+        // Invalidate only the current session
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('status', 'Successfully logged out!');
+        return redirect()->route('login');
     }
 }

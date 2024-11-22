@@ -5,7 +5,7 @@
 <head>
     @include('layouts.links')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <title>Reside Me - Room Details</title>
+    <title>ResideMe - Room Details</title>
 </head>
 
 <style>

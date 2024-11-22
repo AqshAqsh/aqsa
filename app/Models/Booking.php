@@ -39,6 +39,14 @@ class Booking extends Model
             if (empty($booking->booking_date)) {
                 $booking->booking_date = Carbon::now()->toDateString(); // Set to current date
             }
+
+            $existingBooking = Booking::where('user_id', $booking->user_id)
+                ->whereIn('status', ['pending', 'approved'])
+                ->exists();
+
+            if ($existingBooking) {
+                throw new \Exception('You cannot have more than one active booking request.');
+            }
         });
     }
 
@@ -54,6 +62,7 @@ class Booking extends Model
 
     public function bed()
     {
-        return $this->belongsTo(Bed::class, 'bedno', 'bed_no');
+        return $this->belongsTo(Bed::class, 'bedno', 'bed_no')
+                    ->where('room_id', $this->room_id); 
     }
 }

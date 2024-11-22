@@ -22,7 +22,7 @@ Facility Update
                     <form method="POST" action="{{ route('admin.facility.update', ['id' => $facility->id]) }}" enctype="multipart/form-data" class="forms-sample">
                         @csrf
                         <!-- Adding method spoofing for PUT request -->
-
+                        @method('PUT')
                         <div class="form-group row">
                             <label for="name" class="col-sm-3 col-form-label">Facility Name</label>
                             <div class="col-sm-9">

@@ -4,23 +4,23 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\BedManager\BedController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\UserNotificationController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserHomeController;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\FeedbackController;
-
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\AdminBookingController;
-
-
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\BedManager\RoomCategoryController;
 use App\Http\Controllers\Admin\BedManager\RoomController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\FacilityController;
+use Illuminate\Support\Facades\Mail;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +28,30 @@ use App\Http\Controllers\FacilityController;
 |--------------------------------------------------------------------------
 */
 
-Route::view('/', 'welcome');
+
+
+Route::get('/send-test-email', function () {
+    Mail::raw('This is a test email', function ($message) {
+        $message->to('test@example.com')  // This email won't be sent; it will be captured by Mailtrap
+            ->subject('Test Email');
+    });
+
+    return 'Test email sent!';
+});
+
+
+
+Route::get('/unauthorized', function () {
+    return view('errors.unauthorized');
+})->name('unauthorized');
+
+Route::get('/', [App\Http\Controllers\UserHomeController::class, 'showWelcomePage']);
+Route::middleware(['HandleTabSessions'])->group(function () {
+    Route::get('/home', [LoginController::class, 'index']);
+    // Add other routes that need tab-specific session management
+});
+
+
 Route::prefix('user')->group(function () {
     Route::middleware('guest:web')->group(function () {
         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('auth.login');
@@ -44,13 +67,21 @@ Route::prefix('user')->group(function () {
         Route::post('/logout', [LoginController::class, 'userLogout'])->name('user.logout');
         Route::get('/profile', [UserController::class, 'showProfile'])->name('profile.show');
         Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
-        Route::get('/inbox', [UserController::class, 'showbookingrequest'])->name('bookingrequestresponse.show');
-        Route::post('/notifications/{notificationId}/read', [UserController::class, 'markAsRead'])->name('notifications.read');
+        Route::get('/notifications', [UserNotificationController::class, 'index'])->name('notifications');
+        Route::post('/notifications/{id}/read', [UserNotificationController::class, 'markAsRead'])->name('notification.read');
         Route::get('/feedback/create', [FeedbackController::class, 'create'])->name('feedback.create');
         Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
         Route::get('/room/{id}', [RoomController::class, 'showRoomDetails'])->name('room.details');
+        Route::get('booking/{booking_id}', [BookingController::class, 'show'])->name('room.showbooking');
         Route::get('/room/{room_no}/booking', [BookingController::class, 'bookRoom'])->name('room.booking');
         Route::post('/room/{room_no}/booking', [BookingController::class, 'store'])->name('room.booking.store');
+        Route::get('/room/booking/{id}/downloadReport', [BookingController::class, 'downloadReport'])->name('room.report');
+        Route::delete('/booking/{id}/delete', [BookingController::class, 'deleteBooking'])->name('booking.delete');
+        Route::get('/notifications', [UserController::class, 'showNotifications'])->name('notifications');
+        Route::post('/notifications/{notificationId}/mark-as-read', [UserController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+        Route::get('/user/rooms', [UserHomeController::class, 'showRoomsWithFilters'])->name('rooms.filter');
+        Route::get('/notice', [UserController::class, 'showNotice'])->name('notice');
     });
 });
 
@@ -65,14 +96,33 @@ Route::prefix('admin')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'dashboard'])->name('admin.dashboard');
         Route::post('/logout', [AdminController::class, 'adminlogout'])->name('admin.logout');
+        Route::get('/feedback', [FeedbackController::class, 'index'])->name('admin.feedback.list');
+        Route::post('/feedback/{feedback}/status', [AdminController::class, 'updateFeedbackStatus'])->name('admin.feedback.updateStatus');
+        Route::get('/admin/profile', [AdminController::class, 'showProfile'])->name('admin.profile');
+        Route::put('/admin/profile', [AdminController::class, 'updateProfile'])->name('admin.updateProfile');
+        Route::get('beds', [AdminBookingController::class, 'showbedassign'])->name('admin.bed.show');
+        Route::get('admin/beds/{bed}/assign', [BedController::class, 'assign'])->name('admin.bed.assigned');
+        Route::post('/admin/notice/send', [NoticeController::class, 'sendNotice'])->name('admin.notice.send');
+        Route::get('/documentation', [AdminController::class, 'view'])->name('admin.documentation');
+        
+        //Route::get('/admin/dashboard', [AdminNotificationController::class, 'getNotifications'])->name('admin.dashboard');
+        Route::get('/admin/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications');
+        Route::patch('/admin/notifications/{notification}', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.markAsRead');
+
+
+
+        Route::get('/live-stream', function () {
+            return view('admin.stream');
+        })->name('live-stream');
+
         // User Management
         Route::controller(UserController::class)->group(function () {
             Route::get('/user/list', 'index')->name('admin.user.list');
             Route::get('/user/create', 'create')->name('admin.user.create');
             Route::post('/user/store', 'store')->name('admin.user.store');
-            Route::get('/user/edit/{id}', 'edit')->name('admin.user.edit');
-            Route::delete('/user/delete/{id}', 'delete')->name('admin.user.delete');
-            Route::put('/user/update/{id}', 'update')->name('admin.user.update');
+            Route::get('/users/edit/{user_id}', [UserController::class, 'edit'])->name('admin.user.edit');
+            Route::put('/users/update/{user_id}', [UserController::class, 'update'])->name('admin.user.update');
+            Route::delete('/users/delete/{user_id}', [UserController::class, 'delete'])->name('admin.user.delete');
         });
 
         // Notice Management
@@ -81,7 +131,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/notice/create', 'create')->name('admin.notice.create');
             Route::post('/notice/store', 'store')->name('admin.notice.store');
             Route::get('/notice/edit/{id}', 'edit')->name('admin.notice.edit');
-            Route::delete('/notice/delete/{id}', 'delete')->name('admin.notice.delete');
+            Route::get('/notice/delete/{id}', 'delete')->name('admin.notice.delete');
             Route::put('/notice/update/{id}', 'update')->name('admin.notice.update');
         });
 
@@ -111,18 +161,8 @@ Route::prefix('admin')->group(function () {
             Route::get('/bed/create', 'create')->name('admin.bed.create');
             Route::post('/bed/store', 'store')->name('admin.bed.store');
             Route::get('/bed/edit/{id}', 'edit')->name('admin.bed.edit');
-            Route::delete('/bed/delete/{id}', 'delete')->name('admin.bed.delete');
+            Route::get('/bed/delete/{id}', 'delete')->name('admin.bed.delete');
             Route::put('/bed/update/{id}', 'update')->name('admin.bed.update');
-        });
-
-        // Member Management
-        Route::controller(MemberController::class)->group(function () {
-            Route::get('/member/list', 'index')->name('admin.member.list');
-            Route::get('/member/create', 'create')->name('admin.member.create');
-            Route::post('/member/store', 'store')->name('admin.member.store');
-            Route::get('/member/edit/{id}', 'edit')->name('admin.member.edit');
-            Route::delete('/member/delete/{id}', 'delete')->name('admin.member.delete');
-            Route::put('/member/update/{id}', 'update')->name('admin.member.update');
         });
 
         // Facility Management
@@ -131,7 +171,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/facility/create', 'create')->name('admin.facility.create');
             Route::post('/facility/store', 'store')->name('admin.facility.store');
             Route::get('/facility/edit/{id}', 'edit')->name('admin.facility.edit');
-            Route::delete('/facility/delete/{id}', 'delete')->name('admin.facility.delete');
+            Route::get('/facility/delete/{id}', 'delete')->name('admin.facility.delete');
             Route::put('/facility/update/{id}', 'update')->name('admin.facility.update');
         });
 
