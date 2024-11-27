@@ -6,6 +6,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
+
 
 class NewBookingNotification extends Notification
 {
@@ -45,16 +47,12 @@ class NewBookingNotification extends Notification
      */
     public function toDatabase($notifiable)
     {
-        // Ensure the user relationship is loaded before trying to access it
-        //$userName = $this->booking->user ? $this->booking->user->name : 'Unknown User';
         $roomNumber = $this->booking->room ? $this->booking->room->room_no : 'Unknown Room';
-
         return [
             'booking_id' => $this->booking->id,
-            'user_name' => $this->booking->user->name ?? 'Unknown User', // Ensure this is being accessed correctly
-            'room' => $this->booking->room->room_no,
+            'room_id' => $this->booking->room_id,
             'status' => $this->booking->status,
-            'message' => "New booking request from " . ($this->booking->user->name ?? 'Unknown User') . " for room " . $this->booking->room->room_no . " (Status: " . $this->booking->status . ")",
+            'message' => "New booking request from " . ($this->booking->user->name ?? 'Unknown User') . " for room " . $roomNumber . " (Status: " . $this->booking->status . ")",
         ];
     }
 }

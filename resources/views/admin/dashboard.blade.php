@@ -9,21 +9,8 @@ Dashboard
     <div class="d-xl-flex justify-content-between align-items-start">
         <h2 class="text-dark font-weight-bold mb-2"> Overview dashboard </h2>
         <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
-            <div class="btn-group bg-white p-3" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-link text-dark py-0 border-right" style="color: #021a4d;">7 Days</button>
-                <button type="button" class="btn btn-link text-dark py-0 border-right" style="color: #021a4d;">1 Month</button>
-                <button type="button" class="btn btn-link text-dark py-0" style="color: #021a4d;">3 Month</button>
-            </div>
             <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-calendar mr-1" style="color: #021a4d;"></i>24 Mar 2019 - 24 Mar 2019 </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
-                    <h6 class="dropdown-header" style="color: #021a4d;">Settings</h6>
-                    <a class="dropdown-item" href="#" style="color: #021a4d;">Action</a>
-                    <a class="dropdown-item" href="#" style="color: #021a4d;">Another action</a>
-                    <a class="dropdown-item" href="#" style="color: #021a4d;">Something else here</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#" style="color: #021a4d;">Separated link</a>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -35,10 +22,7 @@ Dashboard
                         <a class="nav-link" id="home-tab" data-toggle="tab" href="#" role="tab" aria-selected="true" style="color: #021a4d;">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" id="business-tab" data-toggle="tab" href="#business-1" role="tab" aria-selected="false" style="color: #021a4d;">Business</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="performance-tab" data-toggle="tab" href="#" role="tab" aria-selected="false" style="color: #021a4d;">Performance</a>
+                        <a class="nav-link active" id="business-tab" data-toggle="tab" href="#business-1" role="tab" aria-selected="false" style="color: #021a4d;">Performance</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="conversion-tab" data-toggle="tab" href="#" role="tab" aria-selected="false" style="color: #021a4d;">Conversion</a>

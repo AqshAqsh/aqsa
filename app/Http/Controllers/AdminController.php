@@ -10,6 +10,11 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Feedback;
+use App\Notifications\FeedbackStatusUpdated;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCreatedMail;
+
+
 
 
 class AdminController extends Controller
@@ -36,6 +41,10 @@ class AdminController extends Controller
         // Update the status
         $feedback->status = $request->input('status');
         $feedback->save();
+        $user = $feedback->user;
+
+        // Send a notification to the user
+        $user->notify(new FeedbackStatusUpdated($feedback, $feedback->status));
 
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Feedback status updated successfully!');
@@ -83,29 +92,26 @@ class AdminController extends Controller
     }
 
 
-    // Handle admin authentication
     public function authenticate(Request $request)
     {
-        // Validate the incoming request
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        // Define credentials
+
         $credentials = $request->only('email', 'password');
 
-        // Attempt to authenticate the admin
         if (Auth::guard('admin')->attempt($credentials)) {
-            // Authentication successful, redirect to the admin dashboard
+
             return redirect()->route('admin.dashboard');
         }
 
-        // Authentication failed, redirect back with error message
-        return redirect()->back()->withErrors(['email' => 'Invalid credentials']);
+        return redirect()->back()->withInput()->withErrors([
+            'error' => 'Either email or password is incorrect.',
+        ]);
     }
 
-    // Handle admin logout
     public function adminlogout(Request $request): \Illuminate\Http\RedirectResponse
     {
         Auth::logout();
@@ -122,31 +128,6 @@ class AdminController extends Controller
         return view('feedbacks.index', compact('feedbacks'));
     }
 
-    // Store a new user
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        // Validate the incoming request
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        // Generate a unique User ID using a custom format
-        $userID = 'USER-' . strtoupper(Str::random(8));
-
-        // Create the user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'user',
-            'user_id' => $userID,
-        ]);
-
-        return redirect()->route('admin.users')
-            ->with('success', 'User created successfully with User ID: ' . $userID);
-    }
     public function view()
     {
         $filePath = public_path('docs/Hostel.pdf');

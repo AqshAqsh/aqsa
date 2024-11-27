@@ -56,6 +56,6 @@ class Bed extends Model
     // In Bed Model
     public function booking()
     {
-        return $this->hasOne(Booking::class); // Adjust according to your relationship
+        return $this->hasOne(Booking::class, 'bedno');
     }
 }

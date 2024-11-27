@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\Facility;
+use App\Models\RoomCategory;
+use App\Models\Block; // Assuming there's a Block model for room data
 
 
 
@@ -12,10 +14,15 @@ class UserHomeController extends Controller
 {
     public function index()
     {
-        $rooms = Room::take(3)->get();
+        // Fetch categories, blocks, and facilities from the database
+        $categories = RoomCategory::all();
+        $rooms = Room::all(); // Assuming you have a Block model
         $facilities = Facility::all();
-        return view('home', compact('rooms', 'facilities'));
+
+        // Pass data to the view
+        return view('home', compact('categories', 'rooms', 'facilities'));
     }
+
     public function showWelcomePage()
     {
         $rooms = Room::take(3)->get();
@@ -25,13 +32,10 @@ class UserHomeController extends Controller
 
     public function showRoomsWithFilters(Request $request)
     {
-        // Fetch all facilities
         $facilities = Facility::all();
 
-        // Build the query to fetch rooms
-        $query = Room::with(['facilities', 'beds', 'block']); // Use 'facilities' as the relation name
+        $query = Room::with(['facilities', 'beds', 'block']); 
 
-        // Filter rooms based on the selected facilities
         if ($request->has('facilities') && !empty($request->facilities)) {
             $query->whereHas('facilities', function ($q) use ($request) {
                 $q->whereIn('id', $request->facilities);
@@ -43,7 +47,6 @@ class UserHomeController extends Controller
             $q->where('is_occupied', 0);
         })->paginate(10);
 
-        // Return the view with rooms and facilities
         return view('rooms', compact('rooms', 'facilities'));
     }
 }

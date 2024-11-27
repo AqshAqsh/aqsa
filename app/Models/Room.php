@@ -18,6 +18,8 @@ class Room extends Model
         'room_charge',
         'block_id',  
         'number_of_members',
+        'picture',
+
     ];
 
     public function building()
@@ -27,7 +29,7 @@ class Room extends Model
 
     public function block()
     {
-        return $this->belongsTo(Block::class);
+        return $this->belongsTo(Block::class, 'block_id');
     }
 
     // Relationship to RoomCategory
@@ -40,8 +42,8 @@ class Room extends Model
     public function beds()
     {
         return $this->hasMany(Bed::class, 'room_id');
+        
     }
-
     // Relationship to Booking
     public function bookings()
     {

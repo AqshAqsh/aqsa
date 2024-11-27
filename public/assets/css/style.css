@@ -6,7 +6,7 @@
   * SCSS Compass Functions
   * Boostrap Main SCSS
   * Template mixins
-    + Animation Mixins
+    + Animation Mixins3
     + Background Mixins
     + Badge Mixins
     + Button Mixins
@@ -5150,6 +5150,24 @@ select.tt-hint:focus::-ms-value {
   display: block;
   width: 100%;
 }
+
+.table td.description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; /* Adjust max-width as needed */
+}
+
+.table td.description-wrap {
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.table td.description-scroll {
+  max-width: 200px; /* Adjust max-width as needed */
+  overflow: auto;
+  white-space: nowrap;
+}
+
 
 .col-form-label {
   padding-top: calc(0.94rem + 1px);

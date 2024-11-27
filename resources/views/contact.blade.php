@@ -21,9 +21,9 @@
         <h2 class="fw-bold h-font text-center">CONTACT US</h2>
         <div class="h-line bg-dark"></div>
         <p class="text-center mt-3">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. In, dolorem delectus!<br>
-            Error, deleniti est rerum, cum quisquam autem ipsum molestias,<br>
-            odio nisi maiores ad blanditiis quam natus quasi! Veniam, illum!
+        We’d love to hear from you! Whether you have a question about our hostel,<br> 
+        need assistance with booking, or want to share feedback, we are here to help. 
+        Your comfort and satisfaction are our top priorities,<br> and our team is always ready to assist you with any inquiries or concerns.
         </p>
     </div>
 
@@ -72,7 +72,7 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                            <button type="submit" class="btn btn-warning">Submit Feedback</button>
                         </div>
                     </form>
 

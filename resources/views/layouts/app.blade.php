@@ -15,12 +15,15 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito|Poppins:wght@400;500;600|Merienda:wght@700&display=swap" rel="stylesheet">
 
+    <link href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" rel="stylesheet">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/common.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
 </head>
 
 <body class="bg-light">
@@ -59,59 +62,81 @@
                             <a href="{{ route('auth.login') }}" class="btn btn-outline-dark shadow-none me-3 me-lg-2">Login</a>
                         </li>
                         @else
-                        
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="nav-profile-img">
-                                    <img src="{{ asset('assets/images/faces/face28.png') }}" alt="image">
-                                </div>
-                                <div class="nav-profile-text">
-                                    <p class="mb-1 text-black">{{ Auth::user()->name }}</p>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <h2 class="dropdown-header text-uppercase pl-2 text-dark">User Options</h2>
-                                <li><a class="dropdown-item" href="{{ route('notice') }}">{{ __('NoticeBoard') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('profile.show') }}">{{ __('Profile') }}</a></li>
-                                <li><a class="dropdown-item" href="{{  route('notifications')  }}">{{ __('Alerts') }}</a></li>
-                                <div class="dropdown-divider"></div>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('user.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
-                                    <form id="logout-form" action="{{ route('user.logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </li>
-                            </ul>
 
-                        </li>
-                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                            <h6 class="p-3 mb-0 bg-primary text-white py-4">Notifications</h6>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item preview-item">
-                                <div class="preview-thumbnail">
-                                    <div class="preview-icon bg-success">
-                                        <i class="mdi mdi-calendar"></i>
+                        <li class="nav-item nav-profile dropdown">
+                            <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="profile align-items-center">
+
+                                    <div class="nav-profile-img">
+                                        <img src="{{ Auth::user()->user_picture ? asset('storage/' . Auth::user()->user_picture) : asset('images/defaultprofile.png') }}"
+                                            alt="{{ Auth::user()->name }}">
                                     </div>
+                                    <div class="nav-profile-text">
+                                        <p class="mb-1 text-black">{{ Auth::user()->name }}</p>
+                                    </div>
+
                                 </div>
-                                <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-                                    <h6 class="preview-subject font-weight-normal mb-1">Event today</h6>
-                                    <p class="text-gray ellipsis mb-0"> Just a reminder that you have an event today </p>
-                                </div>
+
                             </a>
-                            <div class="dropdown-divider"></div>
-                            <h6 class="p-3 mb-0 text-center">See all notifications</h6>
-                        </div>
+                            <div class="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
+                                <div class="p-3 text-center nav-profile-img" style="background-color: #010142;">
+                                    <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ Auth::user()->user_picture ? asset('storage/' . Auth::user()->user_picture) : asset('images/defaultprofile.png') }}"
+                                        alt="{{ Auth::user()->name }}">
+
+                                </div>
+                                <div class="p-2">
+                                    <h2 class="dropdown-header text-uppercase pl-2 text-dark">User Options</h2>
+                                    <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{route('notice') }}">
+                                        <span>NoticeBoard</span>
+                                        <span class="p-0">
+                                            <span class="badge badge-danger"></span>
+                                            <i class="mdi mdi-email-open-outline ml-1"></i>
+                                        </span>
+                                    </a>
+                                    <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{route('profile.show') }}">
+                                        <span>Profile</span>
+                                        <span class="p-0">
+                                            <span class="badge badge-success"></span>
+                                            <i class="bi bi-person-fill"></i>                                        </span>
+                                    </a>
+                                    <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{route('user.notifications') }}">
+                                        <span>Alerts</span>
+                                        <span class="p-0">
+                                            <span class="badge badge-danger">{{ Auth::user()->unreadNotifications->count() }}</span>
+                                            <i class="bi bi-bell"></i>
+                                        </span>
+                                    </a>
+                                    <div role="separator" class="dropdown-divider"></div>
+                                    <h5 class="dropdown-header text-uppercase  pl-2 text-dark mt-2">Actions</h5>
+                                    <a class="dropdown-item" href="{{ route('user.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
+
+                                    <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: inline;" class="d-none">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item py-1 d-flex align-items-center justify-content-between" style="background: none; border: none; padding: 0;">
+                                            <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
+                                                <span>Log Out</span>
+                                                <i class="mdi mdi-logout ml-1"></i>
+                                            </a>
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </li>
                         @endguest
+
                     </ul>
                 </div>
 
             </div>
         </nav>
+    </div>
 
-        <!-- Main Content -->
-        <main class="py-4">
-            @yield('content')
-        </main>
+
+    <!-- Main Content -->
+    <main class="py-4">
+        @yield('content')
+    </main>
     </div>
 
     <!-- Bootstrap Bundle JS (includes Popper) -->
@@ -121,7 +146,14 @@
     <!-- Footer -->
     @include('layouts.footer')
 
-    <!-- JavaScript to generate unique session_id per tab -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    <!-- Vendor JS -->
+    <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}" defer></script>
+    <script src="{{ asset('assets/vendors/chart.js/Chart.min.js') }}" defer></script>
+
+
     <script>
         // Check if session_id is already stored in localStorage
         if (!localStorage.getItem('session_id')) {
@@ -136,6 +168,12 @@
         // Optionally, you can send this session ID with AJAX requests or form submissions
         // For example, you can attach it to an HTTP request header or include it in your form data
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+
 </body>
 
 </html>

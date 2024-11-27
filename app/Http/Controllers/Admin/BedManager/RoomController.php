@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Booking;
 use App\Models\Block;
+use App\Models\Facility;
+
 use App\Models\Room;
 use App\Models\RoomCategory;
 use Illuminate\Http\Request;
@@ -33,11 +35,16 @@ class RoomController extends Controller
             'room_charge' => 'required|numeric',
             'description' => 'nullable|string',
             'number_of_members' => 'nullable|integer',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Determine the block based on the room number
         $roomNo = (int)$request->room_no; // Convert to integer for comparison
         $blockId = null;
+        $picturePath = null;
+        if ($request->hasFile('picture')) {
+            $picturePath = $request->file('picture')->store('room_pictures', 'public');
+        }
 
         // Fetch the block based on the room number
         if ($roomNo >= 201 && $roomNo <= 220) {
@@ -60,6 +67,7 @@ class RoomController extends Controller
             'room_charge' => $request->room_charge,
             'description' => $request->description,
             'number_of_members' => $request->number_of_members,
+            'picture' => $picturePath,
         ]);
         return redirect()->route('admin.room.list')->with('Success', 'Room successfully created');
 
@@ -79,8 +87,8 @@ class RoomController extends Controller
             'room_no' => 'required|string|max:255',
             'room_category_id' => 'required|exists:room_categories,id',
             'description' => 'nullable|string',
-            'room_charge' => 'required|integer|min:0',
-            'image_path' => 'nullable|string',
+            'room_charge' => 'required|integer|min:0', // Ensure it's treated as an integer
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $roomNumber = (int)$validate['room_no'];
@@ -103,12 +111,21 @@ class RoomController extends Controller
         }
 
         $room = Room::findOrFail($id);
+        if ($request->hasFile('picture')) {
+            $picturePath = $request->file('picture')->store('room_pictures', 'public');
+            $validate['picture'] = $picturePath;
+        }
+
+        // Cast room_charge to an integer
+        $validate['room_charge'] = (int)$validate['room_charge'];
+
         $room->update(array_merge($validate, [
             'block_id' => $blockId,
         ]));
 
         return redirect()->route('admin.room.list')->with('Success', 'Room successfully updated');
     }
+
 
     public function destroy($id)
     {
@@ -133,15 +150,6 @@ class RoomController extends Controller
         return response()->json(['rooms' => $rooms]);
     }
 
-    public function getRoomDetails($id)
-    {
-        $room = Room::with('category', 'beds')->findOrFail($id);
-        return response()->json([
-            'storey' => $room->category->storey ?? 'N/A',
-            'bed_count' => $room->beds->count(),
-            'facilities' => $room->description,
-        ]);
-    }
 
     public function adminFunctionality()
     {
@@ -201,5 +209,112 @@ class RoomController extends Controller
         }
 
         return redirect()->route('booking.success');
+    }
+
+    public function showAvailabilityForm()
+    {
+        $categories = RoomCategory::all();
+        $blocks = Block::all(); // Assuming you have a Block model
+        $facilities = Facility::all();
+
+        // Pass data to the view
+        return view('home', compact('categories', 'blocks', 'facilities'));
+    }
+
+
+    public function checkAvailability(Request $request)
+    {
+        // Retrieve the selected filters
+        $room_category = $request->input('category');
+        $roomNo = $request->input('room_no');
+        $selectedFacilities = $request->input('facilities', []);
+
+        // Query to retrieve rooms based on the filters
+        $query = Room::query();
+
+        if ($room_category) {
+            $query->where('room_category_id', $room_category);
+        }
+
+        if ($roomNo) {
+            $query->where('room_no', $roomNo);
+        }
+
+        if (!empty($selectedFacilities)) {
+            $query->whereHas('facilities', function ($q) use ($selectedFacilities) {
+                $q->whereIn('facility_id', $selectedFacilities);
+            });
+        }
+
+        // Retrieve the rooms that match the criteria
+        $rooms = $query->get();
+
+        // Fetch categories, blocks, and facilities from the database
+        $categories = RoomCategory::all();  // Fetch categories here
+        $facilities = Facility::all();  // Fetch facilities here
+
+        // Pass data to the view
+        return view('home', compact('categories', 'rooms', 'facilities'));
+    }
+
+
+
+
+
+
+
+    public function showavail(Room $room)
+    {
+        $blocks = Block::all();
+        $facilities = Facility::all();
+
+        // Initialize availableRooms as an empty collection if no filters are applied
+        $availableRooms = Room::with(['block', 'beds', 'facilities'])->get();
+
+        return view('rooms', compact('availableRooms', 'blocks', 'facilities'));
+    }
+    public function getRoomDetails($room_no)
+    {
+        $room = Room::with(['beds' => function ($query) {
+            $query->where('status', 'available');
+        }, 'facilities'])->where('room_no', $room_no)->first();
+
+        if (!$room) {
+            return response()->json(['message' => 'Room not found'], 404);
+        }
+
+        $availableBeds = $room->beds->pluck('status');  // Array of bed statuses
+        $facilities = $room->facilities;
+
+        return response()->json([
+            'block_name' => $room->block->block_name,
+            'availableBeds' => $availableBeds,
+            'facilities' => $facilities,
+        ]);
+    }
+    public function getRoomBlock($roomNo)
+    {
+        $room = Room::where('room_no', $roomNo)->first();
+        return response()->json(['block_name' => $room->block->block_name]);
+    }
+
+    public function getAvailableBeds($roomNo)
+    {
+        $room = Room::where('room_no', $roomNo)->first();
+        $beds = $room->beds()->where('is_occupied', 0)->get(); // assuming `is_occupied` indicates if the bed is free
+        return response()->json(['beds' => $beds]);
+    }
+
+
+
+
+    public function roo()
+    {
+        // Fetch any necessary data for the form (e.g., building blocks, facilities)
+        $blocks = \App\Models\Block::all();
+        $facilities = \App\Models\Facility::all();
+
+        // Load the search form view
+        return view('rooms.roo', compact('blocks', 'facilities'));
     }
 }

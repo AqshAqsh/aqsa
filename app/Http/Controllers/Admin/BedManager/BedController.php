@@ -36,11 +36,23 @@ class BedController extends Controller
             return redirect()->back()->withErrors(['error' => 'Cannot add more beds. The maximum limit is 4 beds per room.']);
         }
 
-        // Create multiple bed records based on bed_no
-        $currentBedCount = Bed::where('room_id', $validate['room_id'])->count();
-        for ($i = 0; $i < $validate['bed_no']; $i++) {
+        // Get current bed numbers for the room and extract the numeric part
+        $existingBeds = Bed::where('room_id', $validate['room_id'])
+            ->orderBy('bed_no')
+            ->get()
+            ->pluck('bed_no')
+            ->map(function ($bedNo) {
+                return (int) filter_var($bedNo, FILTER_SANITIZE_NUMBER_INT);
+            })
+            ->toArray();
+
+        // Determine available bed numbers based on existing ones
+        $availableBedNumbers = $this->getNextAvailableBedNumbers($existingBeds, $validate['bed_no']);
+
+        // Create multiple bed records based on available bed numbers
+        foreach ($availableBedNumbers as $bedNumber) {
             Bed::create([
-                'bed_no' => "Bed No " . ($currentBedCount + $i + 1), // Unique bed number
+                'bed_no' => "Bed No " . $bedNumber, // Assign available bed number
                 'room_id' => $validate['room_id'],
                 'description' => $validate['description'],
             ]);
@@ -48,11 +60,40 @@ class BedController extends Controller
 
         // Update the number of members for the room
         $room = Room::find($validate['room_id']);
-        $room->number_of_members += $validate['bed_no']; // Increase by the number of beds added
+        $room->number_of_members += count($availableBedNumbers); // Increase by the number of beds added
         $room->save();
 
         return redirect()->route('admin.bed.list')->with('success', 'Bed records successfully added');
     }
+
+    /**
+     * Get the next available bed numbers for a room.
+     *
+     * @param array $existingBeds List of existing bed numbers in a room.
+     * @param int $bedsToAdd Number of new beds to add.
+     * @return array List of bed numbers that can be assigned.
+     */
+    private function getNextAvailableBedNumbers(array $existingBeds, int $bedsToAdd): array
+    {
+        $maxBedsPerRoom = 4;
+        $availableNumbers = [];
+
+        // Find the missing numbers in the sequence
+        for ($i = 1; $i <= $maxBedsPerRoom; $i++) {
+            // If the number is not in the list of existing beds, it's available
+            if (!in_array($i, $existingBeds)) {
+                $availableNumbers[] = $i;
+            }
+
+            // Stop if we've collected enough numbers to satisfy the requested number
+            if (count($availableNumbers) >= $bedsToAdd) {
+                break;
+            }
+        }
+
+        return $availableNumbers;
+    }
+
 
     public function edit($id)
     {

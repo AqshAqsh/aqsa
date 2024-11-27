@@ -8,7 +8,7 @@ Bed List
     <div class="row " id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>Bed</h3>
+                <h3 class="mt-2 mr-3">Bed</h3>
                 <a href="{{ route('admin.bed.create') }}" class="btn purchase-button">Add New</a>
             </span>
         </div>
@@ -22,7 +22,7 @@ Bed List
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>#</th>
                                 <th>Bed No</th>
                                 <th>Room ID</th>
                                 <th>Description</th>
@@ -32,10 +32,10 @@ Bed List
                         <tbody>
                             @foreach ($beds as $bed)
                             <tr>
-                                <td>{{ $bed->id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $bed->bed_no }}</td>
                                 <td>{{ $bed->room->room_no }}</td>
-                                <td>{{ $bed->description }}</td>
+                                <td class="description-scroll">{{ $bed->description }}</td>
                                 <td>
                                     <a href="{{ route('admin.bed.edit', ['id' => $bed->id]) }}"
                                         class="btn btn-success">Edit</a>

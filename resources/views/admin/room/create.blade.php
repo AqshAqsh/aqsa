@@ -19,7 +19,7 @@ Create Room
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Create Room</h4>
-                    <form method="POST" action="{{ route('admin.room.store') }}" enctype="multipart/form-data" class="forms-sample">
+                    <form id="myForm" method="POST" action="{{ route('admin.room.store') }}" enctype="multipart/form-data" class="forms-sample">
                         @csrf
                         <div class="form-group row">
                             <label for="room_no" class="col-sm-3 col-form-label">Room No</label>
@@ -57,6 +57,15 @@ Create Room
                                 @enderror
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="picture" class="col-sm-3 col-form-label">Room Picture</label>
+                            <div class="col-sm-9">
+                                <input type="file" name="picture" class="form-control" id="picture" accept="image/*">
+                                @error('picture')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label for="description" class="col-sm-3 col-form-label">Description</label>
@@ -67,6 +76,8 @@ Create Room
                                 @enderror
                             </div>
                         </div>
+
+
 
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                     </form>

@@ -25,14 +25,12 @@ class FacilityController extends Controller
 
     public function create()
     {
-        // Retrieve rooms to populate the dropdown
         $rooms = Room::all();
         return view('admin.facility.create', compact('rooms'));
     }
 
     public function store(Request $request)
     {
-        // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
@@ -44,13 +42,11 @@ class FacilityController extends Controller
             'room_ids.required' => 'Please select at least one room.',
         ]);
 
-        // Handle icon upload
         $iconPath = null;
         if ($request->hasFile('icon')) {
             $iconPath = $request->file('icon')->store('facility_icons', 'public');
         }
 
-        // Create the facility
         $facility = Facility::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -67,9 +63,8 @@ class FacilityController extends Controller
 
     public function edit($id)
     {
-        // Fetch the facility and rooms for the edit form
         $facility = Facility::with('rooms')->findOrFail($id);
-        $rooms = Room::all(); // Retrieve all rooms to populate the dropdown
+        $rooms = Room::all(); 
         return view('admin.facility.update', compact('facility', 'rooms'));
     }
 
@@ -78,11 +73,10 @@ class FacilityController extends Controller
         // Retrieve the facility
         $facility = Facility::findOrFail($id);
 
-        // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
-            'icon' => 'nullable|mimes:jpg,jpeg,png,gif,svg|max:2048',
+            'icon' => 'nullable|mimes:jpg,jpeg,png,gif,svg|max:3072',
             'room_ids' => 'required|array',
             'room_ids.*' => 'exists:rooms,id'
         ], [
@@ -90,23 +84,18 @@ class FacilityController extends Controller
             'room_ids.required' => 'Please select at least one room.',
         ]);
 
-        // Handle icon upload
         if ($request->hasFile('icon')) {
-            // Delete the old icon if it exists
             if ($facility->icon) {
                 Storage::disk('public')->delete($facility->icon);
             }
-            // Store the new icon
             $facility->icon = $request->file('icon')->store('facility_icons', 'public');
         }
 
-        // Update facility details
         $facility->update([
             'name' => $request->name,
             'description' => $request->description,
         ]);
 
-        // Sync associated rooms
         if ($request->has('room_ids')) {
             $facility->rooms()->sync($request->room_ids);
         }
@@ -117,7 +106,6 @@ class FacilityController extends Controller
 
     public function delete(Facility $facility)
     {
-        // Delete facility and its icon if it exists
         if ($facility->icon) {
             Storage::disk('public')->delete($facility->icon);
         }

@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Notices;
-
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCreatedMail;
 
 class UserController extends Controller
 {
@@ -30,20 +32,22 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'password' => 'required|string|min:6',
             'email' => 'required|email|max:255|unique:users,email',
             'role' => 'required|string|in:user,admin', // Ensure role is validated
         ]);
 
-        // Create the new user
+        // Create new user instance
         $user = new User();
         $user->user_id = 'USER-' . strtoupper(Str::random(8)); // Generate unique user_id
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        $user->password = Hash::make($request->input('password')); // Hash the password
-        $user->role = $request->input('role'); // Set the role
+        $user->role = $request->input('role');
         $user->save();
 
+        // Send email to user with the generated user_id
+        Mail::to($user->email)->send(new UserCreatedMail($user->user_id)); // Pass the whole user object
+
+        // Redirect with success message
         return redirect()->route('admin.user.list')->with('success', 'User registered successfully!');
     }
 
@@ -58,19 +62,13 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user_id . ',user_id',
-            'password' => 'nullable|string|min:6', // Optional for updating password
-            'role' => 'required|string|in:user,admin', // Ensure role is validated
+            'role' => 'required|string|in:user,admin',
         ]);
 
-        $user = User::where('user_id', $user_id)->firstOrFail(); // Find user by user_id
+        $user = User::where('user_id', $user_id)->firstOrFail();
 
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-
-        // Only update password if provided
-        if ($request->input('password')) {
-            $user->password = Hash::make($request->input('password'));
-        }
 
         $user->role = $request->input('role');
         $user->save();
@@ -90,51 +88,64 @@ class UserController extends Controller
         return redirect()->route('admin.user.list')->with('error', 'User not found');
     }
 
-    public function showNotice()
-    {
-        $user = auth()->user();
-        $notifications = $user->notifications; // Fetch all notifications for the logged-in user
-        $activeNotices = Notices::active()->get(); // Get active notices
-
-        // Pass the correct variable to the view
-        return view('notice', compact('user', 'notifications', 'activeNotices'));
-    }
 
     public function showProfile()
     {
-        $user = auth()->user(); // Get logged-in user data
+        $user = auth()->user();
         return view('profile', compact('user'));
     }
 
     public function updateProfile(Request $request)
     {
-        // Validate input data
         $request->validate([
-            'full_name' => 'required|string|max:255',
+            'full_name' => 'required|string|max:255|regex:/^[\S\s]+$/',  // Ensures no space character allowed
             'gender' => 'required|in:Male,Female,Other',
-            'date_of_birth' => 'required|date',
-            'contact_number' => 'required|regex:/^[0-9]{10}$/',
+            'date_of_birth' => 'required|date|before:-18 years',  // Ensures user is at least 18 years old
+            'contact_number' => 'required|regex:/^[0-9]{11}$/|min:11|max:11',
             'permanent_address' => 'required|string',
             'current_address' => 'required|string',
-            'college_roll_number' => 'required|string',
+            'college_roll_number' => 'required|string',  // Ensures roll number is unique
             'college_department' => 'required|string',
             'semester' => 'required|string',
             'program' => 'required|string',
-            'enrollment_year' => 'required|integer|between:2000,' . date('Y'),
-            'room_number' => 'required|integer',
-            'hostel_block' => 'required|string',
-            'bed_number' => 'required|string',
+            'enrollment_year' => 'required|string',
+            'room_number' => 'nullable|integer',
+            'hostel_block' => 'nullable|string',
+            'bed_number' => 'nullable|string',
             'guardian_name' => 'required|string',
-            'guardian_contact_number' => 'required|regex:/^[0-9]{10}$/',
+            'guardian_contact_number' => 'required|regex:/^[0-9]{11}$/|min:11|max:11',
             'guardian_address' => 'required|string',
+            'user_picture' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+        ], [
+            'date_of_birth.before' => 'You must be at least 18 years old.',
+            'college_roll_number.unique' => 'This roll number has already been taken.',
+            'enrollment_year.between' => 'Enrollment year must be between 2000 and the current year.',
         ]);
 
-        // Get the logged-in user and explicitly type hint it
-        /** @var \App\Models\User $user */
-        $user = auth()->user();
+        // Check if date_of_birth is at least 18 years ago
+        $birthDate = Carbon::parse($request->date_of_birth);
+        $age = Carbon::now()->diffInYears($birthDate);
+        if ($age < 18) {
+            return back()->withErrors(['date_of_birth' => 'You must be at least 18 years old.']);
+        }
 
-        // Update only the allowed fields
-        $user->update($request->only([
+        // Adjust the semester field based on the gap in enrollment year
+        $yearsGap = Carbon::parse($request->enrollment_year)->diffInYears(Carbon::now());
+
+        if ($yearsGap <= 1) {
+            $request->merge(['semester' => '1st or 2nd']);
+        } elseif ($yearsGap == 4) {
+            $request->merge(['semester' => '1st to 8th']);
+        }
+        $user = auth()->user();
+        $path = $request->file('user_picture')->store('public/user_pictures');
+
+        // If you want to store the relative path in the database, remove 'public/' from the stored path
+        $imagePath = str_replace('public/', '', $path);
+
+
+        // Store other fields
+        auth()->user()->update($request->only([
             'full_name',
             'gender',
             'date_of_birth',
@@ -152,34 +163,34 @@ class UserController extends Controller
             'guardian_name',
             'guardian_contact_number',
             'guardian_address',
-            'relation_to_guardian',
+            'user_picture' => $imagePath,
+
         ]));
 
-        // Redirect to the profile page with success message
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
     }
-    public function showNotifications()
-    {
-        // Fetch notifications for the authenticated user
-        $notifications = Auth::user()->notifications;
 
-        // Return view with notifications data
-        return view('notifications', compact('notifications'));
+
+
+
+    public function showNotice()
+    {
+        $user = auth()->user();
+        $notice = $user->notice;
+        $activeNotices = Notices::active()->get();
+
+        return view('notice', compact('user', 'notice', 'activeNotices'));
     }
 
-
-    public function markAsRead($notificationId)
+    public function markAsRead($noticeId)
     {
-        // Get the notification by ID
-        $notification = Auth::user()->notifications()->where('id', $notificationId)->first();
+        $notice = Auth::user()->notifications()->where('id', $noticeId)->first();
 
-        // If the notification exists, mark it as read
-        if ($notification) {
-            $notification->markAsRead();
+        if ($notice) {
+            $notice->markAsRead();
             return back()->with('success', 'Notification marked as read.');
         }
 
-        // If notification is not found
         return back()->with('error', 'Notification not found.');
     }
 }

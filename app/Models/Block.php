@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Block extends Model
 {
     use HasFactory;
+    protected $table = 'blocks';
 
     // Define the fillable properties
     protected $fillable = [
@@ -19,5 +20,9 @@ class Block extends Model
     public function building()
     {
         return $this->belongsTo(Building::class);
+    }
+    public function rooms()
+    {
+        return $this->hasMany(Room::class, 'block_id'); // 'block_id' should be the foreign key in the 'rooms' table
     }
 }

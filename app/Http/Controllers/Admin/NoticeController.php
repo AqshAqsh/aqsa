@@ -17,65 +17,73 @@ class NoticeController extends Controller
 {
     public function index()
     {
-        $notices = Notices::latest()->get();
+        // Fetch notices that are not expired
+        $notices = Notices::where('expiry_date', '>=', Carbon::now())->latest()->get();
         return view('admin.notice.list', compact('notices'));
     }
+
     public function create()
     {
         return view('admin.notice.create');
     }
+
     public function showNotice($id)
     {
-        $notice = Notices::find($id);
-        // Ensure expiry_date is a Carbon instance
+        $notice = Notices::findOrFail($id);
+
         $notice->expiry_date = Carbon::parse($notice->expiry_date);
+
+        if ($notice->expiry_date->isPast()) {
+            return redirect()->route('admin.notice.list')->with('error', 'This notice has expired.');
+        }
+
         return view('notice', compact('notice'));
     }
 
-
-
     public function store(Request $request)
     {
-        // Validate the incoming data
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'expiry_date' => 'required|date',
+            'expiry_date' => 'required|date|after:today',
         ]);
 
-        // Create a new notice
         $notice = new Notices();
         $notice->title = $request->title;
         $notice->content = $request->content;
-        $notice->expiry_date = $request->expiry_date;
-        $notice->date = Carbon::now();  // Set the current date as the notice date
+        $notice->expiry_date = Carbon::parse($request->expiry_date);
+        $notice->date = Carbon::now();  
         $notice->save();
 
-        // Optionally, send a notification to users (separate logic, not tied to notice)
-        // if you want to notify users about the new notice, you can dispatch it separately
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->notify(new NoticeNotification($notice));
+        }
 
-        // Redirect after success
-        return redirect()->route('admin.notice.list')->with('success', 'Notice created successfully!');
+        return redirect()->route('admin.notice.list')->with('success', 'Notice created successfully and notified to all users!');
     }
-
 
     public function edit($id)
     {
-        $notices = Notices::findOrFail($id);
-        return view('admin.notice.update', compact('notices'));
+        $notice = Notices::findOrFail($id);
+        return view('admin.notice.update', compact('notice'));
     }
+
     public function update(Request $request, $id)
     {
-        $validate = $request->validate([
-            'title' => 'Required',
-            'date' => 'Required',
-            'content' => 'Required',
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'expiry_date' => 'required|date|after:today',
         ]);
-        Notices::findOrFail($id)->update($validate);
 
-        return redirect()->route('admin.notice.list')->with('success', 'Notice update successfully');
+        $notice = Notices::findOrFail($id);
+        $notice->update($request->all());
+
+        return redirect()->route('admin.notice.list')->with('success', 'Notice updated successfully!');
     }
-    public function delete(Request $request, $id)
+
+    public function delete($id)
     {
         Notices::destroy($id);
 

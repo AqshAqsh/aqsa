@@ -1,147 +1,208 @@
 @extends('layouts.app')
 @section('title', 'ResideMe _ Home')
 @section('content')
-<!DOCTYPE html>
-<html>
 
-<head>
-    <style>
+@include('layouts.links')
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+
+<style>
+    .availability-form {
+        margin-top: -50px;
+        z-index: 2;
+        position: relative;
+    }
+
+    @media screen and (max-width: 575px) {
         .availability-form {
-            margin-top: -50px;
-            z-index: 2;
-            position: relative;
+            margin-top: 25px;
+            padding: 0 35px;
         }
+    }
 
-        @media screen and (max-width: 575px) {
-            .availability-form {
-                margin-top: 25px;
-                padding: 0 35px;
-            }
-        }
-    </style>
-    @include('layouts.links')
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-</head>
-
+    .facility-checkbox {
+        width: 48%;
+        /* Adjust to fit two checkboxes per line */
+        margin-bottom: 10px;
+        /* Space between rows */
+    }
+</style>
 
 <body class="bg-light">
-    <div class="container-fluid px-lg-4 mt-4">
+    <div class="container-fluid pl-lg-3 ">
         <div class="swiper Swiper-container">
             <div class="swiper-wrapper">
                 <div class="swiper-slide">
-                    <img src="{{ asset('images/a.png') }}" class="w-100 d-block" />
+                    <img src="{{ asset('images/welcomebanner.jpg') }}" class="w-100 d-block" />
                 </div>
                 <div class="swiper-slide">
-                    <img src="{{ asset('images/b.png') }}" class="w-100 d-block" />
+                    <img src="{{ asset('images/building.jpg') }}" class="w-100 d-block" />
                 </div>
                 <div class="swiper-slide">
-                    <img src="{{ asset('images/c.png') }}" class="w-100 d-block" />
+                    <img src="{{ asset('images/outside.jpg') }}" class="w-100 d-block" />
                 </div>
                 <div class="swiper-slide">
-                    <img src="{{ asset('images/d.png') }}" class="w-100 d-block" />
+                    <img src="{{ asset('images/dininghall.jpg') }}" class="w-100 d-block" />
                 </div>
                 <div class="swiper-slide">
-                    <img src="{{ asset('images/e.png') }}" class="w-100 d-block" />
+                    <img src="{{ asset('images/reception.jpg') }}" class="w-100 d-block" />
                 </div>
                 <div class="swiper-slide">
-                    <img src="{{ asset('images/f.png') }}" class="w-100 d-block" />
+                    <img src="{{ asset('images/studyroom.jpg') }}" class="w-100 d-block" />
                 </div>
             </div>
         </div>
     </div>
-    <!-- chech avail-->
+
     <div class="container availability-form">
         <div class="row">
             <div class="col-lg-12 bg-white shadow p-4 rounded">
                 <h5 class="mb-4">Check Room Availability</h5>
-                <form>
+                <form action="{{ route('check.availability') }}" method="GET">
                     <div class="row align-items-end">
+                        <!-- Room Category Selection -->
                         <div class="col-lg-3 mb-3">
-                            <label class="form-label " style="font-weight: 500;">Block</label>
-                            <select class="form-select shadow-none">
-                                <option selected>select</option>
-                                <option value="1">A</option>
-                                <option value="2">B</option>
-                                <option value="3">C</option>
-                                <option value="3">D</option>
+                            <label for="category" class="form-label" style="font-weight: 500;">Room Category</label>
+                            <select class="form-select shadow-none" name="category" id="category">
+                                <option value="">Select Category</option>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('category')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
 
+                        <!-- Room (Block) Selection -->
+                        <div class="col-lg-3 mb-3">
+                            <label for="room_no" class="form-label" style="font-weight: 500;">Room</label>
+                            <select class="form-select shadow-none" name="room_no" id="room_no">
+                                <option value="">Select Room Number</option>
+                                @foreach($rooms as $room)
+                                <option value="{{ $room->room_no }}" {{ request('room_no') == $room->room_no ? 'selected' : '' }}>
+                                    {{ $room->room_no }}
+                                </option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="col-lg-3 mb-3">
-                            <label class="form-label " style="font-weight: 500;">Room Category</label>
-                            <input type="text" class="form-control shadow-none">
-                        </div>
+
+                        <!-- Facilities Selection with Checkboxes, Limited to Two Per Line -->
                         <div class="col-lg-4 mb-3">
-                            <label class="form-label " style="font-weight: 500;">Facilities</label>
-                            <select class="form-select shadow-none">
-                                <option selected>Open this select Facilities</option>
-                                <option value="1">Wifi</option>
-                                <option value="2">Television</option>
-                                <option value="3">Cooler</option>
-                            </select>
+                            <label for="facility" class="form-label" style="font-weight: 500;">Facilities</label>
+                            <div class="d-flex flex-wrap">
+                                @foreach($facilities as $facility)
+                                <div class="form-check" style="flex: 0 0 50%; padding-right: 10px;"> <!-- Use 50% width for two items per line -->
+                                    <input class="form-check-input" type="checkbox" name="facilities[]" id="facility{{ $facility->id }}"
+                                        value="{{ $facility->id }}" {{ is_array(request('facilities')) && in_array($facility->id, request('facilities')) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="facility{{ $facility->id }}">
+                                        {{ $facility->name }}
+                                    </label>
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
 
+                        <!-- Submit Button -->
                         <div class="col-lg-2 mb-lg-3 mt-2">
                             <button type="submit" class="btn text-white shadow-none btn-warning">Check Availability</button>
                         </div>
                     </div>
                 </form>
+
+
+
+
             </div>
         </div>
     </div>
-    <!-- our rooms-->
-    <!-- our rooms-->
-    <h2 class="mt-5 pt-4 mb-4 text-center fw-bold">Our Rooms
-    </h2>
-    <div class="container">
-        <div class="row">
-            @foreach ($rooms->take(3) as $room)
-            <div class="col-lg-4 col-md-6 my-3">
-                <div class="card border-0 shadow" style="width: 350px; height: 400px; margin: auto;">
-                    <img src="{{ asset('images/' . $room->image) }}" class="card-img-top">
-                    <div class="card-body">
-                        <div class="row g-0 p-3 align-items-center">
-                            <h5>{{ $room->name }}</h5>
-                            <h5 class="mb-4">${{ $room->price }}</h5>
-                            <div class="features mb-4">
-                                <h6 class="mb-1"> Features</h6>
-                                <span class="badge rounded-pill bg-light text-dark text-wrap">
-                                    {{ $room->features }}
-                                </span>
-                            </div>
-                            <div class="facilities mb-4">
-                                <h6 class="mb-1">Facilities</h6>
-                                @foreach ($room->facilities as $facility)
-                                <span class="badge rounded-pill bg-light text-dark text-wrap">{{ $facility->name }}</span>
-                                @endforeach
-                            </div>
-                            <div class="rating mb-4">
-                                <h6 class="mb-1">Rating</h6>
-                                <span>
-                                    @for ($i = 0; $i < 5; $i++)
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        @endfor
-                                </span>
-                            </div>
-                            <div class="col-md-12 mt-lg-0 mt-md-0 mt-4 text-center">
-                                <a href="{{ route('room.booking', ['room_no' => $room->room_no]) }}" class="btn btn-sm text-white bg-warning shadow-none w-100 mb-2">Request For Booking</a>
-                                <a href="{{ route('room.details', $room->id) }}" class="btn btn-sm btn-outline-dark shadow-none w-100">More Details</a>
-                            </div>
+
+
+
+    <section id="testimonials-section">
+        <div class="testimonials-container mt-5">
+            <div class="my-5 px-4">
+                <h2 class="fw-bold h-font text-center">See What Makes ResideMe Special</h2>
+                <div class="h-line bg-dark"></div>
+            </div>
+            <div class="swiper-container testimonials-swiper">
+                <div class="swiper-wrapper mb-15">
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/cctv.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">CCTV </h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/Laundaryroom.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">Laundary Room</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/garden.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">Our Garden</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/corridor.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe CorriDoor</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/safety.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Safety</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/dininghall.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Safety</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/outside.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">outside</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/studyroom.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">Student's StudyRoom</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/welcomebanner.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Enterance</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/reception.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Reception</h6>
                         </div>
                     </div>
                 </div>
+                <div class="swiper-pagination"></div>
+
             </div>
-            @endforeach
-            <div class="col-lg-12 text-center mt-5">
-                <a href="{{ route('room') }}" class="btn btn-sm btn-outline-dark fw-bold shadow-none rounded-0 ">MORE ROOMS>>></a>
-            </div>
+
         </div>
+    </section>
+
+    <div class="my-5 px-4">
+        <h2 class="fw-bold h-font text-center">Our Facilities</h2>
+        <div class="h-line bg-dark"></div>
     </div>
-    <!-- our Facilities-->
-    <h2 class="mt-5 pt-4 mb-4 text-center fw-bold">Our Facilities
-    </h2>
 
     <div class="container">
         <div class="row justify-content-evenly px-lg-0 px-md-0 px-5">
@@ -171,20 +232,26 @@
 
         </div>
     </div>
-    <h2 class="mt-5 pt-4 mb-4 text-center fw-bold">TESTIMONIALS
-    </h2>
-
+    <div class="my-5 px-4">
+        <h2 class="fw-bold h-font text-center">What Our Users Say</h2>
+        <div class="h-line bg-dark"></div>
+    </div>
     <div class="container mt-5">
         <div class="swiper swiper-testimonial ">
             <div class="swiper-wrapper mb-5">
-
-
                 <div class="swiper-slide bg-white p-4">
-                    <div class="profile d-flex align-items-center mb-3">
-                        <img src="{{ asset('images/wifi.svg') }}" width="30px">
-                        <h6 class="m-0 ms-0">Random userl</h6>
+                    <div class="profile d-flex align-items-right mb-3">
+
+                        <div class="nav-profile-img1">
+                            <img src="{{ asset('images/face5.jpg') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text1">
+                            <p class="mb-1 text-black"> Aqsa Rahman, Resident </p>
+                        </div>
+
                     </div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ratione, odit voluptate dolor, atque amet non totam officiis repellat facere ea corrupti inventore sit, esse nulla porro quam voluptates ullam necessitatibus?</p>
+                    <p>ResideMe has made my booking process seamless and stress-free.
+                        I no longer need to worry about finding the perfect room!</p>
                     <div class="rating">
                         <i class="bi bi-star-fill text-warning"></i>
                         <i class="bi bi-star-fill text-warning"></i>
@@ -195,10 +262,18 @@
                 </div>
                 <div class="swiper-slide bg-white p-4">
                     <div class="profile d-flex align-items-center mb-3">
-                        <img src="{{ asset('images/wifi.svg') }}" width="30px">
-                        <h6 class="m-0 ms-0">Random userl</h6>
+
+                        <div class="nav-profile-img1">
+                            <img src="{{ asset('images/face4.jpg') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text1">
+                            <p class="mb-1 text-black"> Ali Khan, Hostel Manager</p>
+                        </div>
+
                     </div>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam veritatis at voluptate eveniet, fugit doloribus nesciunt placeat neque, molestiae, quae dolores enim veniam! Incidunt repellat tempora beatae, error voluptatum unde.</p>
+
+                    <p>As a hostel manager, ResideMe has simplified the way I handle bookings,
+                        facilities, and communication with residents. It's an invaluable tool!</p>
                     <div class="rating">
                         <i class="bi bi-star-fill text-warning"></i>
                         <i class="bi bi-star-fill text-warning"></i>
@@ -209,10 +284,17 @@
                 </div>
                 <div class="swiper-slide bg-white p-4">
                     <div class="profile d-flex align-items-center mb-3">
-                        <img src="{{ asset('images/wifi.svg') }}" width="30px">
-                        <h6 class="m-0 ms-0">Random userl</h6>
+
+                        <div class="nav-profile-img1">
+                            <img src="{{ asset('images/face6.jpg') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text1">
+                            <p class="mb-1 text-black"> Sarah Lee, Resident</p>
+                        </div>
+
                     </div>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit nihil id sunt accusantium possimus, blanditiis voluptatibus excepturi incidunt eum? Repellat enim qui iste dicta architecto, quo cupiditate cum! Sequi, voluptatibus.</p>
+                    <p>The best part of ResideMe is the user-friendly interface.
+                        It’s easy to navigate, even for those who aren’t tech-savvy!</p>
                     <div class="rating">
                         <i class="bi bi-star-fill text-warning"></i>
                         <i class="bi bi-star-fill text-warning"></i>
@@ -222,19 +304,16 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="swiper-pagination"></div>
         </div>
         <div class="col-lg-12 text-center mt-5">
-            <a href="{{ route('about') }}" class="btn btn-sm btn-outline-dark fw-bold shadow-none rounded-0  ">KNOW MORE>>></a>
+            <a href="{{route('about')}}" class="btn btn-sm btn-outline-dark fw-bold shadow-none rounded-0  ">KNOW MORE>>></a>
         </div>
-
     </div>
-
-    <!-- reach us -->
-    <h2 class="mt-5 pt-4 mb-4 text-center fw-bold">REACH US
-    </h2>
+    <div class="my-5 px-4">
+        <h2 class="fw-bold h-font text-center">Reach Us</h2>
+        <div class="h-line bg-dark"></div>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-8 bg-white rounded mb-lg-0 p-4 ">
@@ -272,14 +351,35 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <!-- Initialize Swiper -->
-    <script>
-        var swiperGallery = new Swiper('.swiper-container', {
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper(".Swiper-container", {
+        spaceBetween: 30,
+        effect: "fade",
+        loop: true,
+        autoplay: {
+            delay: 3500,
+            disableOnInteraction: false,
+        }
+
+    });
+    // Initialize the Swiper for the Testimonials Section
+    document.addEventListener('DOMContentLoaded', function() {
+        const testimonialSwiper = new Swiper('.testimonials-swiper', {
+            effect: "coverflow",
             loop: true,
-            autoplay: {
-                delay: 2500,
-                disableOnInteraction: false,
+            grabCursor: true,
+            slidesPerView: 1,
+            spaceBetween: 30,
+            coverflowEffect: {
+                rotate: 25,
+                stretch: 0,
+                depth: 100,
+                modifier: 1,
+                slideShadows: false,
             },
             pagination: {
                 el: '.swiper-pagination',
@@ -289,26 +389,59 @@
                 nextEl: '.swiper-button-next',
                 prevEl: '.swiper-button-prev',
             },
-        });
-
-        var swiperTestimonial = new Swiper(".swiper-testimonial", {
-            effect: "coverflow",
-            grabCursor: true,
-            centeredSlides: true,
-            slidesPerView: "auto",
-            coverflowEffect: {
-                rotate: 50,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: true,
+            autoplay: {
+                delay: 2000,
+                disableOnInteraction: false,
             },
-            pagination: {
-                el: ".swiper-pagination",
+            breakpoints: {
+                320: {
+                    slidesPerView: 1,
+                },
+                640: {
+                    slidesPerView: 1,
+                },
+                768: {
+                    slidesPerView: 2,
+                },
+                1024: {
+                    slidesPerView: 3,
+                },
             },
         });
-    </script>
-</body>
+    });
 
-</html>
+
+    var swiper = new Swiper(".swiper-testimonial", {
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        slidesPerView: "3",
+        coverflowEffect: {
+            rotate: 50,
+            stretch: 0,
+            depth: 100,
+            modifier: 1,
+            slideShadows: false,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+        },
+        breakpoints: {
+            320: {
+                slidesPerView: 1,
+            },
+            640: {
+                slidesPerView: 1,
+            },
+            768: {
+                slidesPerView: 2,
+            },
+            1024: {
+                slidesPerView: 3,
+            }
+        }
+    });
+</script>
+
 @endsection

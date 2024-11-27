@@ -23,7 +23,9 @@ Rooms List
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                            <th>#</th>
+
+                                <th>Room Picture</th>
                                 <th>Room No</th>
                                 <th>Room Category</th>
                                 <th>Description</th>
@@ -33,10 +35,17 @@ Rooms List
                         <tbody>
                             @foreach ($rooms as $room)
                             <tr>
-                                <td>{{ $room->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
+
+                                <td> @if($room->picture)
+                                    <img src="{{ asset('storage/' . $room->picture) }}" alt="Room pic" width="50" height="50">
+                                    @endif
+                                    {{ $room->name }}
+                                </td>
+
                                 <td>{{ $room->room_no }}</td>
                                 <td>{{ $room->category->name }}</td>
-                                <td>{{ $room->description }}</td>
+                                <td class="description-scroll">{{ $room->description }}</td>
                                 <td>{{ $room->room_charge }}</td>
 
 

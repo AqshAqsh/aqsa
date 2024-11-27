@@ -19,7 +19,7 @@ Room Category Create
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Create Room Category</h4>
-                    <form method="POST" action="{{ route('admin.room_category.store') }}" class="forms-sample">
+                    <form id="myForm" method="POST" action="{{ route('admin.room_category.store') }}" class="forms-sample">
                         @csrf
                         <div class="form-group row">
                             <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Name</label>

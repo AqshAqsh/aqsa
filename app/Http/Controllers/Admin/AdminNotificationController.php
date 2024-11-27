@@ -13,12 +13,9 @@ class AdminNotificationController extends Controller
 {
     public function __construct()
     {
-        // Ensure notifications are available globally in all views
         $this->middleware(function ($request, $next) {
-            // Fetch unread notifications for the logged-in admin
             $notifications = Auth::user() ? Auth::user()->unreadNotifications : collect();
 
-            // Share the notifications with all views
             View::share('notifications', $notifications);
 
             return $next($request);
@@ -27,10 +24,8 @@ class AdminNotificationController extends Controller
 
     public function index()
     {
-        // Get the authenticated admin user
         $admin = Auth::user();
 
-        // Retrieve all unread notifications for the admin
         $notifications = $admin->unreadNotifications;
 
         return view('admin.notifications.inbox', compact('notifications'));

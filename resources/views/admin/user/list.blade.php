@@ -20,20 +20,22 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>#</th>
+
                     <th>User ID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Password</th> <!-- You may want to reconsider showing password -->
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($users as $value)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
+
                     <td>{{ $value->user_id }}</td>
                     <td>{{ $value->name }}</td>
                     <td>{{ $value->email }}</td>
-                    <td>********</td> <!-- Masked Password for security -->
                     <td>
                         <a class="btn btn-danger p-1">
 

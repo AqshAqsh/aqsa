@@ -29,8 +29,8 @@
             <h4 class="card-title">Booking Details</h4>
             <p><strong>Bed:</strong> {{ $booking->bedno }}</p>
             <p><strong>Duration:</strong> {{ $booking->duration_months }} months</p>
-            <p><strong>Room Charges:</strong> ${{ $booking->room_charge }} per month</p>
-            <p><strong>Total Charges:</strong> ${{ $booking->total_charge }}</p>
+            <p><strong>Room Charges:</strong> Rs.{{ $booking->room->room_charge }} per month</p>
+            <p><strong>Total Charges:</strong> Rs.{{ $booking->total_charge }}</p>
 
             <h4 class="card-title">Emergency Contact</h4>
             <p><strong>Name:</strong> {{ $booking->emergency_contact_name }}</p>

@@ -52,6 +52,7 @@ class FeedbackNotification extends Notification
         return [
             'feedback_id' => $this->feedback->id,
             'user_id' => $this->feedback->user_id,
+            'status' => $this->feedback->status, // Add status for feedback updates
             'message' => "New feedback from user {$this->feedback->user->name}.",
         ];
     }

@@ -22,7 +22,7 @@ Room Update
                     <form method="POST" action="{{ route('admin.room.update', $room->id) }}" enctype="multipart/form-data" class="forms-sample">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="form-group row">
                             <label for="room_no" class="col-sm-3 col-form-label">Room No</label>
                             <div class="col-sm-9">
@@ -51,6 +51,43 @@ Room Update
                         </div>
 
                         <div class="form-group row">
+                            <label for="block_name" class="col-sm-3 col-form-label">Block Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="block_name" class=" form-control" id="block_name" placeholder="Block Name" value="{{ old('block_name', $room->block->block_name) }}" readonly>
+                                @error('block_name')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="room_charge" class="col-sm-3 col-form-label">Room Charge</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="room_charge" class="form-control" id="room_charge" placeholder="Enter Room Charge" value="{{ old('room_charge', intval($room->room_charge) ) }}">
+                                @error('room_charge')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="picture" class="col-sm-3 col-form-label">Room Picture</label>
+                            <div class="col-sm-9">
+                                <input type="file" name="picture" class="form-control" id="picture" accept="image/*">
+                                @error('picture')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+
+                                <!-- Display existing picture if available -->
+                                @if($room->picture)
+                                <div class="mt-3">
+                                    <img src="{{ asset('storage/' . $room->picture) }}" alt="Room Picture" width="150">
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label for="description" class="col-sm-3 col-form-label">Description</label>
                             <div class="col-sm-9">
                                 <textarea name="description" id="description" cols="30" rows="10" class="form-control">{{ old('description', $room->description) }}</textarea>
@@ -60,26 +97,6 @@ Room Update
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="room_charge" class="col-sm-3 col-form-label">Room Charge</label>
-                            <div class="col-sm-9">
-                                <input type="number" name="room_charge" class="form-control" id="room_charge" placeholder="Enter Room Charge" value="{{ old('room_charge', $room->room_charge) }}">
-                                @error('room_charge')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Add block_id field -->
-                        <div class="form-group row">
-                            <label for="block_id" class="col-sm-3 col-form-label">Block ID</label>
-                            <div class="col-sm-9">
-                                <input type="text" name="block_id" class=" form-control" id="block_id" placeholder="Block ID" value="{{ old('block_id', $room->block_id) }}" readonly>
-                                @error('block_id')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
 
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                     </form>

@@ -73,14 +73,14 @@
 
             <div class="form-group row">
                 <label for="year_of_study" class="col-sm-3 col-form-label">Session Year</label>
-                <input type="number" name="year_of_study" class="form-control" id="year_of_study" value="{{ old('year_of_study') }}" required>
+                <input type="text" name="year_of_study" class="form-control" id="year_of_study" value="{{ old('year_of_study') }}" required>
                 @error('year_of_study')
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
 
             <div class="form-group row">
- <label for="department" class="col-sm-3 col-form-label">Department</label>
+                <label for="department" class="col-sm-3 col-form-label">Department</label>
                 <input type="text" name="department" class="form-control" id="department" value="{{ old('department') }}" required>
                 @error('department')
                 <span class="text-danger">{{ $message }}</span>
@@ -142,11 +142,14 @@
             <h3>Select Bed</h3>
             <div id="bed_selection">
                 @foreach ($room->beds as $bed)
+                @if (!$bed->is_occupied) <!-- Show only available beds -->
                 <div class="form-check">
                     <input type="radio" name="bedno" class="form-check-input" id="bed_id_{{ $bed->id }}" value="{{ $bed->bed_no }}" required>
                     <label class="form-check-label" for="bed_id_{{ $bed->id }}">Bed {{ $bed->bed_no }}</label>
                 </div>
+                @endif
                 @endforeach
+
             </div>
 
             <div class="form-group row">
@@ -183,7 +186,7 @@
             </div>
             <div class="form-group row">
                 <label for="emergency_contact_phone" class="form-label">Emergency Contact Number</label>
-                <input type="text" name="emergency_contact_phone" id="emergency_contact_phone" class="form-control" required>
+                <input type="text" name="emergency_contact_phone" id="emergency_contact_phone" class="form-control" pattern="^[0-9]{11}$" title="Enter a valid 11-digit contact number" required>
                 @error('emergency_contact_phone')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror

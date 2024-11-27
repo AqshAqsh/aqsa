@@ -3,9 +3,6 @@
     <a class="navbar-brand brand-logo" href="dashboard"><img src="{{ asset('images/logo.jpg') }}" alt="new logo" /> ResideMe</a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-stretch">
-    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-      <span class="mdi mdi-menu"></span>
-    </button>
     <div class="container">
       @auth('admin')
       @if (session('status'))
@@ -17,19 +14,21 @@
       @endauth
     </div>
     <ul class="navbar-nav navbar-nav-right">
-
       <li class="nav-item nav-profile dropdown">
         <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-          <div class="nav-profile-img">
-            <img src="{{ asset('assets/images/faces/face28.png') }} " alt="image">
-          </div>
+          <img class="img-avatar img-avatar48 img-avatar-thumb"
+            src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('assets/images/faces/defaultprofile.png') }}"
+            alt="{{ Auth::user()->name }}">
+
           <div class="nav-profile-text">
             <p class="mb-1 text-black">{{ Auth::user()->name }}</p>
           </div>
         </a>
         <div class="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
           <div class="p-3 text-center" style="background-color: #010142;">
-            <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('assets/images/faces/face28.png') }} " alt="">
+            <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('assets/images/faces/defaultprofile.png') }}"
+              alt="{{ Auth::user()->name }}">
+
           </div>
           <div class="p-2">
             <h5 class="dropdown-header text-uppercase pl-2 text-dark">Admin Options</h5>
@@ -43,13 +42,9 @@
             <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{route('admin.profile') }}">
               <span>Profile</span>
               <span class="p-0">
-                <span class="badge badge-success">1</span>
+                <span class="badge badge-success"></span>
                 <i class="mdi mdi-account-outline ml-1"></i>
               </span>
-            </a>
-            <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="javascript:void(0)">
-              <span>Settings</span>
-              <i class="mdi mdi-settings"></i>
             </a>
             <div role="separator" class="dropdown-divider"></div>
             <h5 class="dropdown-header text-uppercase  pl-2 text-dark mt-2">Actions</h5>
@@ -77,25 +72,6 @@
 
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
           <h6 class="p-3 mb-0 text-white py-4" style="background-color: #010142;">Notifications</h6>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item preview-item">
-            <div class="preview-thumbnail">
-              <img src="assets/images/faces/face4.jpg" alt="image" class="profile-pic">
-            </div>
-            <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-              <h6 class="preview-subject ellipsis mb-1 font-weight-normal">Mark send you a message</h6>
-              <p class="text-gray mb-0"> 1 Minutes ago </p>
-            </div>
-          </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-          <i class="mdi mdi-email-outline"></i>
-          <span class="count-symbol bg-success"></span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
-          <h6 class="p-3 mb-0 text-white py-4" style="background-color: #010142;">Feedbacks</h6>
           <div class="dropdown-divider"></div>
 
 
@@ -125,9 +101,8 @@
       </li>
 
 
-
     </ul>
-    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
       <span class="mdi mdi-menu"></span>
     </button>
   </div>

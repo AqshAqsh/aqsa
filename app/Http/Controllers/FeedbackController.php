@@ -16,46 +16,40 @@ class FeedbackController extends Controller
         $user = Auth::user();
         return view('contact', compact('user'));
     }
-    // Display feedback submission form
     public function create()
     {
-        return view('feedbacks.create');  // Create this view for feedback form
+        return view('feedbacks.create');  
     }
     public function Index()
     {
-        $feedbacks = Feedback::all();  // Retrieve all feedback
+        $feedbacks = Feedback::latest()->get();  
 
         return view('feedbacks.list', compact('feedbacks'));
     }
 
 
-    // Store feedback in the database
     public function store(Request $request)
     {
-        // Validate the feedback data
         $request->validate([
-            'message' => 'required|string|max:500', // You can adjust the max length as needed
+            'message' => 'required|string|max:500', 
         ]);
 
-        // Get the authenticated user's ID and email
         $user = Auth::user();
 
-        // Create the feedback record in the database
         $feedback = Feedback::create([
-            'user_id' => $user->user_id, // Assuming `user_id` is the primary key
-            'email' => $user->email,     // You may or may not need to store email, adjust as needed
+            'user_id' => $user->user_id, 
+            'email' => $user->email,     
             'message' => $request->input('message'),
         ]);
 
         // Send notification to the admin (only if admin exists)
-        $admin = Admin::first(); // Assuming 'role' is how you identify the admin
+        $admin = Admin::first(); 
         if ($admin) {
             Log::info('Sending feedback notification to admin.');
 
-            $admin->notify(new FeedbackNotification($feedback)); // Send notification to the admin
+            $admin->notify(new FeedbackNotification($feedback)); 
         }
 
-        // Redirect back to the contact page with success message
         return redirect()->route('contact')->with('success', 'Feedback submitted successfully!');
     }
 }

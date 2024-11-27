@@ -21,8 +21,8 @@ class NoticeNotification extends Notification
 
     public function via($notifiable)
     {
-        // If you still want to notify users, you can leave it like this:
-        return ['database'];  // But you'll need to manually dispatch the notification elsewhere
+        
+        return ['database']; 
     }
 
     public function toDatabase($notifiable)
@@ -31,7 +31,6 @@ class NoticeNotification extends Notification
             'title' => $this->notice->title,
             'content' => $this->notice->content,
             'expiry_date' => $this->notice->expiry_date,
-            'created_at' => $this->notice->date,
         ];
     }
 }

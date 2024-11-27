@@ -19,9 +19,10 @@ Room_Category Update
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Update Room Categories</h4>
-                    <form method="POST" action="{{ route('admin.room_category.update',['id'=>$room_categorys->id]) }}" enctype="multipart/form-data"
+                    <form method="POST" action="{{ route('admin.room_category.update',$room_categorys->id) }}" enctype="multipart/form-data"
                         class="forms-sample">
                         @csrf
+                        @method('PUT')
                         <div class="form-group row">
                             <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Name</label>
                             <div class="col-sm-9">

@@ -5,7 +5,9 @@
         <link rel="shortcut icon" href="{{ asset('images/logo.jpg') }}" />
 
             <h3 class="h-font fw-bold fs-3 mb-2 "> ResideMe</h3>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit tenetur tempore beatae dolorem sed fuga nostrum necessitatibus qui modi commodi nobis facilis eius rem quas unde dignissimos, reiciendis, aspernatur illum.</p>
+            <p>Your Trusted Partner in Comfortable Living
+
+Providing a seamless and hassle-free hostel management experience for residents and administrators. We aim to create a community where convenience, comfort, and care are at the forefront.</p>
 
         </div>
         <div class="col-lg-4 col-md-4 p-4 text-center">

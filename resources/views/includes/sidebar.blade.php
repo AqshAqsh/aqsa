@@ -1,3 +1,4 @@
+
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     <li class="nav-item nav-category">Main</li>
@@ -5,7 +6,7 @@
     <!-- Dashboard Menu -->
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-        <span class="icon-bg"><i class="mdi mdi-cube menu-icon"></i></span>
+        <span class="icon-bg"><i class="mdi mdi-access-point menu-icon"></i></span>
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
@@ -13,7 +14,7 @@
     <!-- Live Stream Menu -->
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('live-stream') ? 'active' : '' }}" href="{{ route('live-stream') }}">
-        <span class="icon-bg"><i class="mdi mdi-cube menu-icon"></i></span>
+        <span class="icon-bg"><i class="mdi mdi-webcam menu-icon"></i></span>
         <span class="menu-title">Watch Live Stream</span>
       </a>
     </li>
@@ -21,7 +22,7 @@
     <!-- Residents Menu -->
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('admin.user.create') || request()->routeIs('admin.user.list') ? 'active' : '' }}" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-        <span class="icon-bg"><i class="mdi mdi-crosshairs-gps menu-icon"></i></span>
+        <span class="icon-bg"><i class="mdi mdi-contacts menu-icon"></i></span>
         <span class="menu-title">Residents</span>
         <i class="menu-arrow"></i>
       </a>
@@ -39,8 +40,8 @@
 
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('admin.room_category.list') || request()->routeIs('admin.room.list') || request()->routeIs('admin.bed.list') ? 'active' : '' }}" data-toggle="collapse" href="#bedmanager" aria-expanded="false" aria-controls="bedmanager">
-        <span class="icon-bg"><i class="mdi mdi-crosshairs-gps menu-icon"></i></span>
-        <span class="menu-title">Bed Manager</span>
+        <span class="icon-bg"><i class="mdi mdi-hotel menu-icon"></i></span>
+        <span class="menu-title">Room/Bed Manage</span>
         <i class="menu-arrow"></i>
       </a>
       <div class="collapse {{ request()->routeIs('admin.room_category.list') || request()->routeIs('admin.room.list') || request()->routeIs('admin.bed.list') ? 'show' : '' }}" id="bedmanager">
@@ -68,7 +69,7 @@
     <!-- Booking Menu -->
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('admin.bookings.list') ? 'active' : '' }}" data-toggle="collapse" href="#booking" aria-expanded="false" aria-controls="booking">
-        <span class="icon-bg"><i class="mdi mdi-crosshairs-gps menu-icon"></i></span>
+        <span class="icon-bg"><i class="mdi mdi-clipboard-list menu-icon"></i></span>
         <span class="menu-title">Booking</span>
         <i class="menu-arrow"></i>
       </a>
@@ -84,7 +85,7 @@
     <!-- Feedbacks Menu -->
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('admin.feedback.list') ? 'active' : '' }}" data-toggle="collapse" href="#feedback" aria-expanded="false" aria-controls="feedback">
-        <span class="icon-bg"><i class="mdi mdi-crosshairs-gps menu-icon"></i></span>
+        <span class="icon-bg"><i class="mdi mdi-comment menu-icon"></i></span>
         <span class="menu-title">Feedbacks</span>
         <i class="menu-arrow"></i>
       </a>
@@ -100,7 +101,7 @@
     <!-- Notice Menu -->
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs('admin.notice.create') || request()->routeIs('admin.notice.list') ? 'active' : '' }}" data-toggle="collapse" href="#notice" aria-expanded="false" aria-controls="notice">
-        <span class="icon-bg"><i class="mdi mdi-crosshairs-gps menu-icon"></i></span>
+        <span class="icon-bg"><i class="mdi mdi-bullhorn menu-icon"></i></span>
         <span class="menu-title">Notice</span>
         <i class="menu-arrow"></i>
       </a>
@@ -144,14 +145,6 @@
       </div>
     </li>
 
-    <!-- Settings and Logout Menu -->
-    <li class="nav-item sidebar-user-actions">
-      <div class="sidebar-user-menu">
-        <a href="#" class="nav-link"><i class="mdi mdi-settings menu-icon"></i>
-          <span class="menu-title">Settings</span>
-        </a>
-      </div>
-    </li>
     <li class="nav-item sidebar-user-actions">
       <div class="sidebar-user-menu">
         <form action="{{ route('admin.logout') }}" method="POST" style="display: inline;">

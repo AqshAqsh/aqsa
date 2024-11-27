@@ -39,9 +39,9 @@ Facility List
                                     @endif
                                     {{ $facility->name }}
                                 </td>
-                                <td>{{ optional($facility->room)->room_no ?? 'N/A' }}</td>
+                                <td>{{ optional($facility->room)->room->room_no ?? 'N/A' }}</td>
 
-                                <td>{{ $facility->description }}</td>
+                                <td class="description-scroll">{{ $facility->description }}</td>
                                 <td>
                                     <a href="{{ route('admin.facility.edit', ['id' => $facility->id]) }}" class="btn btn-success">Edit</a>
                                     <a href="{{ route('admin.facility.delete', ['id' => $facility->id]) }}" class="btn btn-danger">Delete</a>

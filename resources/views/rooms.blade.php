@@ -14,7 +14,6 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-1 col-md-12 px-4"></div>
-
         <div class="col-lg-10 col-md-12 px-4">
             <div class="card mb-5 border-0 shadow">
                 <div class="row g-0 p-1 align-items-center">
@@ -36,7 +35,7 @@
                         </div>
                         <div class="col-md-3 mt-lg-0 mt-md-0 mt-4 text-center">
 
-                            <a href="{{ route('room.showbooking', $newBooking->id) }}" class="btn btn-warning" style="background-color: #010142;">View New Booking Request</a>
+                            <a href="{{ route('room.showbooking', $newBooking->id) }}" class="btn btn-warning" style="background-color: #D5AF07;">View New Booking Request</a>
                         </div>
                         @else <!-- If no new booking exists -->
                         <div class="col-md-7 px-lg-2 px-md-2 px-0">
@@ -60,7 +59,7 @@
                         </div>
                         <div class="col-md-3 mt-lg-0 mt-md-0 mt-4 text-center">
 
-                            <a href="{{ route('room.showbooking', $newBooking->id) }}" class="btn btn-warning" style="background-color: #010142;">View New Booking Request</a>
+                            <a href="{{ route('room.showbooking', $newBooking->id) }}" class="btn btn-warning" style="background-color: #D5AF07;">View New Booking Request</a>
                         </div>
                         @else <!-- If no new booking exists -->
                         <div class="col-md-10 px-lg-2 px-md-2 px-0">
@@ -108,92 +107,157 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-lg-3 col-md-12 mb-lg-0 mb-4 px-lg-0">
-                <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow">
-                    <div class="container-fluid flex-lg-column align-items-stretch">
-                        <h4 class="mt-2">FILTER</h4>
-                        <hr><br>
-                        <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterdropdown" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse flex-column mt-2 align-items-stretch" id="filterdropdown">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-12 mb-lg-0 mb-4 px-lg-0">
+                        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow">
+                            <div class="container-fluid flex-lg-column align-items-stretch">
+                                <h4 class="mt-2">FILTER</h4>
+                                <hr><br>
+                                <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterdropdown" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse flex-column mt-2 align-items-stretch" id="filterdropdown">
+                                    <form action="{{ route('rooms.filter') }}" method="GET" class="filter-form">
+                                        <!-- Room Number -->
+                                        <!-- Room Number -->
+                                        <div>
+                                            <label for="room_no">Room Number:</label>
+                                            <select name="room_no" id="room_no" class="form-control">
+                                                <option value="">Select a Room</option>
+                                                @foreach($availableRooms as $room)
+                                                <option value="{{ $room->room_no }}" {{ request('room_no') == $room->room_no ? 'selected' : '' }}>
+                                                    {{ $room->room_no }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
-                        </div>
-                </nav>
-            </div>
+                                        <!-- Building Block (Auto-filled based on selected room) -->
+                                        <div class="form-group">
+                                            <label for="block_name">Building Block:</label>
+                                            @foreach ($availableRooms as $room)
+                                            <input type="text" name="block_name" id="block_name" class="form-control" placeholder="Block Name"
+                                                value="{{ $room->block->block_name }}" readonly>
+                                            @endforeach
 
-            <div class="col-lg-9 col-md-12 px-4">
-                @foreach ($rooms as $room)
-                <div class="card mb-5 border-0 shadow">
-                    <div class="row g-0 p-3 align-items-center">
-                        <div class="col-md-5 mb-lg-0 mb-md-0 mb-3">
-                            <img src="{{ asset('images/3.png') }}" class="img-fluid rounded-start" alt="Room Image">
-                        </div>
-                        <div class="col-md-5 px-lg-3 px-md-3 px-0">
-                            <h5 class="mb-3">{{ $room->room_no }} - {{ $room->category->name }}</h5>
-                            <!-- facilities Section -->
-                            <div class="facilities mb-3">
-                                <h6 class="mb-1">facilities</h6>
-                                @if($room->facilities && $room->facilities->isNotEmpty())
-                                @foreach ($room->facilities as $facility)
-                                <span class="badge rounded-pill bg-light text-dark text-wrap">{{ $facility->name }}</span>
-                                @endforeach
-                                @else
-                                <p>No facilities available</p>
-                                @endif
-                            </div>
+                                        </div>
 
-                            <div class="Guests">
-                                <div class="row mb-2">
-                                    <div class="col-lg-5">
-                                        <h6 class="mt-2">Building Block</h6>
-                                        <span class="badge rounded-pill bg-light text-dark text-wrap">
-                                            {{ $room->block->block_name }} Block
-                                        </span>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <h6 class="mt-2">Guests</h6>
-                                        <span class="badge rounded-pill bg-light text-dark text-wrap">
-                                            {{ $room->number_of_members }} Members
-                                        </span>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <h6 class="mt-2">Beds</h6>
-                                        <span class="badge rounded-pill bg-light text-dark text-wrap">
-                                            {{ $room->beds->count() }} Beds
-                                        </span>
-                                    </div>
+                                        <!-- Number of Beds (Dynamic based on selected room) -->
+                                        <div>
+                                            <label for="beds">Number of Beds:</label>
+                                            <select name="beds" id="beds" class="form-control">
+                                                <option value="">Select a Bed No</option>
+                                                @if(request('room_no'))
+                                                @foreach($rooms as $room)
+                                                @foreach($room->beds as $bed)
+                                                <option value="{{ $bed->id }}" {{ request('beds') == $bed->id ? 'selected' : '' }}>
+                                                    {{ $bed->bed_no }}
+                                                </option>
+                                                @endforeach
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <!-- Room Status -->
+                                        <div>
+                                            <label for="status">Room Status:</label>
+                                            <select name="status" id="status" class="form-control">
+                                                <option value="">Any</option>
+                                                <option value="available" {{ request('status') == 'available' ? 'selected' : '' }}>Available</option>
+                                                <option value="booked" {{ request('status') == 'booked' ? 'selected' : '' }}>Booked</option>
+                                                <option value="partially_booked" {{ request('status') == 'partially_booked' ? 'selected' : '' }}>Partially Booked</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Submit Button -->
+                                        <div>
+                                            <button type="submit" class="btn btn-warning">Search Rooms</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
+                        </nav>
+                    </div>
 
-                            <div class="description">
-                                <h6 class="mt-1">Description</h6>
-                                <span class="badge rounded-pill bg-light text-dark text-wrap">
-                                    {{ $room->description }}
-                                </span>
-                            </div>
-                            
 
-                            <!-- Show availability
+
+                    <div class="col-lg-9 col-md-12 px-4">
+                        @foreach ($rooms as $room)
+                        <div class="room-card mb-5 border-0 shadow">
+                            <div class="row g-0 p-3 align-items-center">
+                                <div class="col-md-5 mb-lg-0 mb-md-0 mb-3">
+                                    <img src="{{ asset('storage/' . $room->picture) }}" class="img-fluid rounded-start" alt="Room Image">
+                                    <h5 class="m-0 ms-3">{{ $room->name }}</h5>
+                                </div>
+                                <div class="col-md-5 px-lg-3 px-md-3 px-0">
+                                    <h5 class="mb-3">{{ $room->room_no }} - {{ $room->category->name }}</h5>
+                                    <!-- facilities Section -->
+                                    <div class="facilities mb-3">
+                                        <h6 class="mb-1">facilities</h6>
+                                        @if($room->facilities && $room->facilities->isNotEmpty())
+                                        @foreach ($room->facilities as $facility)
+                                        <span class="badge rounded-pill bg-light text-dark text-wrap">{{ $facility->name }}</span>
+                                        @endforeach
+                                        @else
+                                        <p>No facilities available</p>
+                                        @endif
+                                    </div>
+
+                                    <div class="Guests">
+                                        <div class="row mb-2">
+                                            <div class="col-lg-5">
+                                                <h6 class="mt-2">Building Block</h6>
+                                                <span class="badge rounded-pill bg-light text-dark text-wrap">
+                                                    {{ $room->block->block_name }} Block
+                                                </span>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <h6 class="mt-2">Guests</h6>
+                                                <span class="badge rounded-pill bg-light text-dark text-wrap">
+                                                    {{ $room->number_of_members }} Members
+                                                </span>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <h6 class="mt-2">Beds</h6>
+                                                <span class="badge rounded-pill bg-light text-dark text-wrap">
+                                                    {{ $room->beds->count() }} Beds
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="description">
+                                        <h6 class="mt-1">Description</h6>
+                                        <span class="badge rounded-pill bg-light text-dark text-wrap">
+                                            {{ $room->description }}
+                                        </span>
+                                    </div>
+
+
+                                    <!-- Show availability
                             @if ($room->beds->isEmpty())
                             <p>No booking available yet</p>
                             @else
                             <p>Room Available</p>
                             @endif-->
+                                </div>
+                                <div class="col-md-2 mt-lg-0 mt-md-0 mt-4 text-center">
+                                    <h5 class="mb-4">RS.{{ $room->room_charge }} Per Month</h5>
+                                    <a href="{{ route('room.booking', ['room_no' => $room->room_no]) }}" class="btn btn-sm text-white bg-warning shadow-none w-100 mb-2">Request For Booking</a>
+                                    <a href="{{ route('room.details', $room->id) }}" class="btn btn-sm btn-outline-dark shadow-none w-100">More Details</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-2 mt-lg-0 mt-md-0 mt-4 text-center">
-                            <h5 class="mb-4">RS.{{ $room->room_charge }} Per Month</h5>
-                            <a href="{{ route('room.booking', ['room_no' => $room->room_no]) }}" class="btn btn-sm text-white bg-warning shadow-none w-100 mb-2">Request For Booking</a>
-                            <a href="{{ route('room.details', $room->id) }}" class="btn btn-sm btn-outline-dark shadow-none w-100">More Details</a>
-                        </div>
+                        @endforeach
+
                     </div>
                 </div>
-                @endforeach
-
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-</div>
-@endsection
+
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+        @endsection

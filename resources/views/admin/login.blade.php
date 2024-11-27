@@ -3,12 +3,21 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
+        <!-- Display the generic error message if present -->
+        @if ($errors->has('error'))
+        <div class="col-md-8">
+            <div class="alert alert-danger">
+                {{ $errors->first('error') }}
+            </div>
+        </div>
+        @endif
+        
         @if(Session::get('error'))
         <div class="col-md-8">
             <div class="alert alert-danger">{{ Session::get('error') }}</div>
-
         </div>
         @endif
+
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">Admin {{ __('Login') }}</div>
@@ -48,7 +57,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6 offset-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old( 'remember') ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
                                     <label class="form-check-label" for="remember">
                                         {{ __('Remember Me') }}
@@ -62,12 +71,6 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Login') }}
                                 </button>
-
-                                @if (Route::has('password.request'))
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
-                                    {{ __('Forgot Your Password?') }}
-                                </a>
-                                @endif
                             </div>
                         </div>
                     </form>

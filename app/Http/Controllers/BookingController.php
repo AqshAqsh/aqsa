@@ -15,7 +15,6 @@ use App\Notifications\NewBookingNotification;
 
 class BookingController extends Controller
 {
-    // Show the booking form for a specific room number
     public function bookRoom($room_no)
     {
         $user = Auth::user();
@@ -28,7 +27,6 @@ class BookingController extends Controller
             dd("User ID not set for the logged-in user.");
         }
 
-        // Fetch the room along with its available beds
         $room = Room::where('room_no', $room_no)
             ->with(['beds' => function ($query) {
                 $query->where('status', 'available'); // Only fetch available beds
@@ -36,7 +34,6 @@ class BookingController extends Controller
 
         $beds = $room->beds; // This will contain only available beds
 
-        // Handle the case when no beds are available
         if ($beds->isEmpty()) {
             return redirect()->route('room')->with('error', 'No available beds in this room.');
         }
@@ -44,81 +41,81 @@ class BookingController extends Controller
         return view('room.booking', compact('userId', 'room', 'beds'));
     }
 
-    // Show the details of a specific booking
     public function show($id)
     {
         $user = Auth::user();
 
-        // Find the booking by the booking ID and ensure it belongs to the logged-in user
         $booking = Booking::where('user_id', $user->user_id)->findOrFail($id);
 
-        // Check if the booking is deleted or rejected
         if (strtolower(trim($booking->status)) === 'deleted' || strtolower(trim($booking->status)) === 'rejected') {
 
-            // Check if the user has made any new booking requests (pending or approved)
             $newBooking = Booking::where('user_id', $user->user_id)
                 ->whereIn('status', ['pending', 'approved'])
-                ->where('id', '!=', $id) // Exclude the current deleted or rejected booking
+                ->where('id', '!=', $id)
                 ->first();
 
-            // If a new booking exists, display that instead of the deleted/rejected booking
             if ($newBooking) {
                 return view('room.showbooking', ['booking' => $newBooking]);
             }
 
-            // If no new booking exists, show the deleted or rejected booking
             return view('room.showbooking', compact('booking'));
         }
 
-        // If the booking is not deleted or rejected, show the current booking details
         return view('room.showbooking', compact('booking'));
     }
 
-    // Store a new booking request
     public function store(Request $request)
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to book a room.');
         }
 
-        // Validate the booking request
         $request->validate([
             'room_id' => 'required|exists:rooms,id',
             'bedno' => ['required', 'string', function ($attribute, $value, $fail) {
-                // Check if the bed is available
                 $bed = Bed::where('bed_no', $value)->where('status', 'available')->first();
                 if (!$bed) {
                     $fail('The selected bed is not available.');
                 }
             }],
-            'fullname' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
+            'fullname' => 'required|string|max:255|regex:/^[^\s]+(\s+[^\s]+)*$/',
+            'date_of_birth' => 'required|date|before:-18 years',
             'gender' => 'required|string|max:10',
-            'year_of_study' => 'required|string|max:255',
+            'year_of_study' => 'required|string|regex:/^\d{4}-\d{4}$/',
             'department' => 'required|string|max:255',
             'rollno' => 'required|string|max:50',
             'duration_months' => 'required|integer|min:1',
             'emergency_contact_name' => 'required|string|max:255',
-            'emergency_contact_phone' => 'required|string|max:15',
+            'emergency_contact_phone' => 'required|regex:/^[0-9]{11}$/|min:11|max:11',
             'terms' => 'accepted',
+        ], [
+            'date_of_birth.before' => 'You must be at least 18 years old.',
+            'fullname.regex' => 'The fullname cannot have leading or trailing spaces.',
+            'year_of_study.in' => 'Year of study must be between 2020 and 2024.',
         ]);
-
-        // Check if the user has an existing booking with status 'approved' or 'pending'
         $userId = Auth::user()->user_id;
         $existingBooking = Booking::where('user_id', $userId)
             ->whereIn('status', ['pending', 'approved'])
             ->first();
 
-        // Prevent a new booking if a previous one is approved or still pending
         if ($existingBooking) {
             return redirect()->route('room.booking', ['room_no' => $request->room_no])
                 ->with('error', 'You cannot make a new booking request because you have an existing booking that is either approved or still pending.');
         }
 
-        // Proceed with creating the booking
         $booking = $this->createBooking($request);
+        $bed = Bed::where('bed_no', $booking->bedno)
+            ->where('room_id', $booking->room_id)
+            ->first();
+        if ($bed) {
+            $bed->update([
+                $bed->status = 'booked',
+            ]);
+        }
 
-        // Notify the admin about the new booking
+        Log::info('Booking created. Attempting to notify admin. Booking ID: ' . $booking->id);
+
+
         $admin = Admin::first();
         if ($admin) {
             $admin->notify(new NewBookingNotification($booking));
@@ -129,10 +126,8 @@ class BookingController extends Controller
         return redirect()->route('room')->with('success', 'Your booking request has been submitted successfully and is pending admin approval.');
     }
 
-    // Helper method to create a new booking request
     private function createBooking(Request $request)
     {
-        // Check if the selected bed is available before proceeding
         $bed = Bed::where('bed_no', $request->bedno)->where('status', 'available')->first();
 
         if (!$bed) {
@@ -141,14 +136,12 @@ class BookingController extends Controller
                 ->withInput();
         }
 
-        // Calculate total charge
         $room = Room::find($request->room_id);
         $roomCharge = $room ? $room->room_charge : 0;
         $durationMonths = $request->duration_months;
         $totalCharge = $roomCharge * $durationMonths;
         Log::info('Total Charge: ' . $totalCharge);
 
-        // Create the booking request with status 'pending'
         $booking = Booking::create([
             'user_id' => Auth::user()->user_id,
             'room_id' => $request->room_id,
@@ -163,13 +156,10 @@ class BookingController extends Controller
             'duration_months' => $request->duration_months,
             'emergency_contact_name' => $request->emergency_contact_name,
             'emergency_contact_phone' => $request->emergency_contact_phone,
-            'status' => 'pending', // Initial status is pending
+            'status' => 'pending',
             'booking_date' => now(),
         ]);
 
-        // Mark the bed as booked (no longer available)
-        $bed->status = 'booked';
-        $bed->save();
         return $booking;
     }
 
@@ -222,6 +212,6 @@ class BookingController extends Controller
         }
 
         // Redirect with a success message
-        return redirect()->route('room.showbooking')->with('success', 'Your booking request has been canceled. You can submit a new request.');
+        return redirect()->route('room')->with('success', 'Your booking request has been canceled. You can submit a new request.');
     }
 }

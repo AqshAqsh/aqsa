@@ -14,14 +14,14 @@ class CreateRoomsTable extends Migration
     public function up()
     {
         Schema::create('rooms', function (Blueprint $table) {
-            $table->id(); // Auto-incrementing ID
-            $table->string('room_no')->unique(); // Unique room number
-            $table->foreignId('room_category_id')->constrained('room_categories')->onDelete('cascade'); // Foreign key to room categories
-            $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade'); // Foreign key to blocks
-            $table->decimal('room_charge', 8, 2); // Room charge
-            $table->string('description')->nullable(); // Optional description
-            $table->integer('number_of_members')->nullable()->default(0); // Optional number of members
-            $table->timestamps(); // Created at and updated at timestamps
+            $table->id(); 
+            $table->string('room_no')->unique(); 
+            $table->foreignId('room_category_id')->constrained('room_categories')->onDelete('cascade'); 
+            $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade'); 
+            $table->decimal('room_charge', 8, 2);
+            $table->string('description')->nullable(); 
+            $table->integer('number_of_members')->nullable()->default(0);
+            $table->timestamps(); 
         });
     }
 

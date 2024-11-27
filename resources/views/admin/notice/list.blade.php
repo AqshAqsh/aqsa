@@ -36,7 +36,7 @@
                                         <td>{{ $notice->id }}</td>
                                         <td>{{ $notice->title }}</td>
                                         <td>{{ $notice->date }}</td>
-                                        <td>{{ $notice->content }}</td>
+                                        <td class="description-scroll">{{ $notice->content }}</td>
                                         <td>
                                             <a href="{{ route('admin.notice.edit', ['id' => $notice->id]) }}"
                                                 class="btn btn-success">Edit</a>
