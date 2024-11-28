@@ -11,7 +11,6 @@ class Feedback extends Model
 
     public $table = 'feedbacks';
 
-    // Define the fillable properties for mass assignment
     protected $fillable = [
         'user_id',
         'email',
@@ -19,7 +18,6 @@ class Feedback extends Model
         'status',
     ];
 
-    // Define the relationship to the User model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');

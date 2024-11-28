@@ -9,7 +9,7 @@ Facility List
     <div class="row" id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>Facilities</h3>
+                <h3 class="mt-2 mr-3">Facilities</h3>
                 <a href="{{ route('admin.facility.create') }}" class="btn purchase-button">Add New</a>
             </span>
         </div>
@@ -38,8 +38,15 @@ Facility List
                                     <img src="{{ asset('storage/' . $facility->icon) }}" alt="{{ $facility->name }}" width="50" height="50">
                                     @endif
                                     {{ $facility->name }}
+                                </td class="description-scroll">
+                                <td>@if($facility->rooms->isNotEmpty())
+                                    @foreach ($facility->rooms as $room)
+                                    {{ $room->room_no }}{{ !$loop->last ? ', ' : '' }}
+                                    @endforeach
+                                    @else
+                                    N/A
+                                    @endif
                                 </td>
-                                <td>{{ optional($facility->room)->room->room_no ?? 'N/A' }}</td>
 
                                 <td class="description-scroll">{{ $facility->description }}</td>
                                 <td>

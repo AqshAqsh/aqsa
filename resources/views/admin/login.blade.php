@@ -1,9 +1,9 @@
 @extends('layouts.admin-app')
 
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <!-- Display the generic error message if present -->
         @if ($errors->has('error'))
         <div class="col-md-8">
             <div class="alert alert-danger">

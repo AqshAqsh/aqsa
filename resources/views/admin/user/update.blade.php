@@ -6,7 +6,7 @@
     <div class="row" id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>Edit User  </h3>
+                <h3 class="mt-2 mr-3">Edit User  </h3>
                 <a href="{{ route('admin.user.list') }}" class="btn purchase-button">Go Back</a>
             </span>
         </div>
@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <form action="{{ route('admin.user.update', $user->user_id) }}" method="POST">
                             @csrf
-                            @method('PUT') <!-- Specify the HTTP method -->
+                            @method('PUT')
 
                             <!-- Name Field -->
                             <div class="form-group">

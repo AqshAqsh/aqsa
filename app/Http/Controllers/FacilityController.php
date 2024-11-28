@@ -11,7 +11,6 @@ class FacilityController extends Controller
 {
     public function index()
     {
-        // Fetch all facilities with their associated rooms
         $facilities = Facility::with('rooms')->get();
         return view('admin.facility.list', compact('facilities'));
     }
@@ -104,8 +103,9 @@ class FacilityController extends Controller
     }
 
 
-    public function delete(Facility $facility)
+    public function delete($id)
     {
+        $facility = Facility::findOrFail($id);
         if ($facility->icon) {
             Storage::disk('public')->delete($facility->icon);
         }

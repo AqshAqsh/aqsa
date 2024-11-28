@@ -6,47 +6,50 @@ use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\Facility;
 use App\Models\RoomCategory;
-use App\Models\Block; // Assuming there's a Block model for room data
-
-
 
 class UserHomeController extends Controller
 {
     public function index()
     {
-        // Fetch categories, blocks, and facilities from the database
         $categories = RoomCategory::all();
-        $rooms = Room::all(); // Assuming you have a Block model
         $facilities = Facility::all();
 
-        // Pass data to the view
-        return view('home', compact('categories', 'rooms', 'facilities'));
+        $rooms = collect(); // Empty collection to show no rooms
+        $roomNumbers = collect(); 
+
+        // Pass categories, rooms, and facilities data to the view
+        return view('home', compact('categories', 'rooms', 'facilities', 'roomNumbers'));
     }
 
-    public function showWelcomePage()
+    public function checkAvailability(Request $request)
     {
-        $rooms = Room::take(3)->get();
-        $facilities = Facility::all();
-        return view('welcome', compact('rooms', 'facilities'));
-    }
+        $category = $request->input('category');
+        $roomNo = $request->input('room_no');
+        $facilities = $request->input('facilities', []);
 
-    public function showRoomsWithFilters(Request $request)
-    {
-        $facilities = Facility::all();
+        $query = Room::query();
 
-        $query = Room::with(['facilities', 'beds', 'block']); 
+        if ($category) {
+            $query->where('room_category_id', $category);
+        }
 
-        if ($request->has('facilities') && !empty($request->facilities)) {
-            $query->whereHas('facilities', function ($q) use ($request) {
-                $q->whereIn('id', $request->facilities);
+        if ($roomNo) {
+            $query->where('room_no', $roomNo);
+        }
+
+        if (!empty($facilities)) {
+            $query->whereHas('facilities', function ($q) use ($facilities) {
+                $q->whereIn('facility_id', $facilities);
             });
         }
 
-        // Fetch rooms that have available beds (where is_occupied = 0)
-        $rooms = $query->whereHas('beds', function ($q) {
-            $q->where('is_occupied', 0);
-        })->paginate(10);
+        $rooms = $query->get();
 
-        return view('rooms', compact('rooms', 'facilities'));
+        $categories = RoomCategory::all();
+        $facilities = Facility::all();
+
+        $roomNumbers = $category ? Room::where('room_category_id', $category)->get(['id', 'room_no']) : collect();
+
+        return view('home', compact('categories', 'rooms', 'facilities', 'roomNumbers'));
     }
 }

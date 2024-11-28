@@ -19,7 +19,7 @@ class Notices extends Model
         'expiry_date',
     ];
     protected $casts = [
-        'expiry_date' => 'datetime',  // Ensures expiry_date is a Carbon instance
+        'expiry_date' => 'datetime',  
     ];
 
     public function scopeActive($query)

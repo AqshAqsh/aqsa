@@ -114,33 +114,45 @@
                             <div class="container-fluid flex-lg-column align-items-stretch">
                                 <h4 class="mt-2">FILTER</h4>
                                 <hr><br>
+
                                 <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterdropdown" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
+
                                 <div class="collapse navbar-collapse flex-column mt-2 align-items-stretch" id="filterdropdown">
                                     <form action="{{ route('rooms.filter') }}" method="GET" class="filter-form">
+                                        <!-- Room Category -->
+                                        <div>
+                                            <label for="category">Room Category:</label>
+                                            <select name="category" id="category" class="form-control">
+                                                <option value="">Select Category</option>
+                                                @foreach($categories as $category)
+                                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
                                         <!-- Room Number -->
                                         <!-- Room Number -->
                                         <div>
                                             <label for="room_no">Room Number:</label>
                                             <select name="room_no" id="room_no" class="form-control">
-                                                <option value="">Select a Room</option>
-                                                @foreach($availableRooms as $room)
+                                                <option value="">Select Room Number</option>
+                                                @if(request()->category)
+                                                @foreach($roomNumbers as $room)
                                                 <option value="{{ $room->room_no }}" {{ request('room_no') == $room->room_no ? 'selected' : '' }}>
                                                     {{ $room->room_no }}
                                                 </option>
                                                 @endforeach
+                                                @endif
                                             </select>
                                         </div>
 
                                         <!-- Building Block (Auto-filled based on selected room) -->
                                         <div class="form-group">
                                             <label for="block_name">Building Block:</label>
-                                            @foreach ($availableRooms as $room)
                                             <input type="text" name="block_name" id="block_name" class="form-control" placeholder="Block Name"
-                                                value="{{ $room->block->block_name }}" readonly>
-                                            @endforeach
-
+                                                value="{{ $selectedRoom ? $selectedRoom->block->block_name : '' }}" readonly>
                                         </div>
 
                                         <!-- Number of Beds (Dynamic based on selected room) -->
@@ -148,26 +160,13 @@
                                             <label for="beds">Number of Beds:</label>
                                             <select name="beds" id="beds" class="form-control">
                                                 <option value="">Select a Bed No</option>
-                                                @if(request('room_no'))
-                                                @foreach($rooms as $room)
-                                                @foreach($room->beds as $bed)
+                                                @if($selectedRoom)
+                                                @foreach($roomBeds as $bed)
                                                 <option value="{{ $bed->id }}" {{ request('beds') == $bed->id ? 'selected' : '' }}>
                                                     {{ $bed->bed_no }}
                                                 </option>
                                                 @endforeach
-                                                @endforeach
                                                 @endif
-                                            </select>
-                                        </div>
-
-                                        <!-- Room Status -->
-                                        <div>
-                                            <label for="status">Room Status:</label>
-                                            <select name="status" id="status" class="form-control">
-                                                <option value="">Any</option>
-                                                <option value="available" {{ request('status') == 'available' ? 'selected' : '' }}>Available</option>
-                                                <option value="booked" {{ request('status') == 'booked' ? 'selected' : '' }}>Booked</option>
-                                                <option value="partially_booked" {{ request('status') == 'partially_booked' ? 'selected' : '' }}>Partially Booked</option>
                                             </select>
                                         </div>
 
@@ -176,8 +175,18 @@
                                             <button type="submit" class="btn btn-warning">Search Rooms</button>
                                         </div>
                                     </form>
+                                    @if(isset($roomAvailability) && $roomAvailability->isNotEmpty())
+                                    @foreach($roomAvailability as $room)
+                                    <p>{{ $room->isAvailable ? 'Room Available' : 'No booking available yet' }}</p>
+                                    @endforeach
+                                    @else
+                                    <p>No rooms available based on the selected filters.</p>
+                                    @endif
                                 </div>
+
                             </div>
+
+
                         </nav>
                     </div>
 
@@ -236,12 +245,12 @@
                                     </div>
 
 
-                                    <!-- Show availability
-                            @if ($room->beds->isEmpty())
-                            <p>No booking available yet</p>
-                            @else
-                            <p>Room Available</p>
-                            @endif-->
+                                    <!-- Show availability-->
+                                    @if ($room->beds->isEmpty())
+                                    <p>No booking available yet</p>
+                                    @else
+                                    <p>Room Available</p>
+                                    @endif
                                 </div>
                                 <div class="col-md-2 mt-lg-0 mt-md-0 mt-4 text-center">
                                     <h5 class="mb-4">RS.{{ $room->room_charge }} Per Month</h5>
@@ -256,8 +265,64 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
 
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.getElementById('category').addEventListener('change', function() {
+        const categoryId = this.value;
+        const roomNoSelect = document.getElementById('room_no');
+        const blockNameInput = document.getElementById('block_name');
+        const bedsSelect = document.getElementById('beds');
 
-        @endsection
+        // Clear existing room options, block name, and beds
+        roomNoSelect.innerHTML = '<option value="">Select Room Number</option>';
+        blockNameInput.value = ''; // Clear block name
+        bedsSelect.innerHTML = '<option value="">Select Bed</option>'; // Clear bed options
+
+        if (categoryId) {
+            // Fetch room numbers related to the selected category via AJAX
+            fetch(`/api/rooms/${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Dynamically populate room numbers
+                    data.rooms.forEach(room => {
+                        const option = document.createElement('option');
+                        option.value = room.room_no;
+                        option.textContent = room.room_no;
+                        roomNoSelect.appendChild(option);
+                    });
+
+                    // Fetch additional information for selected room when a room is selected
+                    roomNoSelect.addEventListener('change', function() {
+                        const selectedRoomNo = this.value;
+
+                        if (selectedRoomNo) {
+                            // Fetch room details including block name and beds based on room number
+                            fetch(`/api/room/details/${selectedRoomNo}`)
+                                .then(response => response.json())
+                                .then(roomDetails => {
+                                    // Set block name
+                                    blockNameInput.value = roomDetails.block_name;
+
+                                    // Dynamically populate beds
+                                    bedsSelect.innerHTML = '<option value="">Select Bed</option>'; // Reset beds options
+                                    roomDetails.beds.forEach(bed => {
+                                        const option = document.createElement('option');
+                                        option.value = bed.id;
+                                        option.textContent = bed.bed_no;
+                                        bedsSelect.appendChild(option);
+                                    });
+                                });
+                        }
+                    });
+                });
+        }
+    });
+</script>
+
+
+
+@endsection

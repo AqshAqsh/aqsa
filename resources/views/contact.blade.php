@@ -47,9 +47,9 @@
                     </a>
 
                     <h5 class="mt-4">Follow US</h5>
-                    <a href="#" class="d-inline-block mb-3 text-dark fs-6 me-2"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="d-inline-block mb-3 text-dark fs-6 me-2"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="d-inline-block text-dark fs-6"><i class="bi bi-instagram"></i></a>
+                    <a href="" class="d-inline-block mb-3 text-dark fs-6 me-2"><i class="bi bi-twitter"></i></a>
+                    <a href="https://www.facebook.com/" class="d-inline-block mb-3 text-dark fs-6 me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="https://www.instagram.com/" class="d-inline-block text-dark fs-6"><i class="bi bi-instagram"></i></a>
                 </div>
             </div>
 

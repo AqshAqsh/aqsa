@@ -24,9 +24,7 @@
 
     .facility-checkbox {
         width: 48%;
-        /* Adjust to fit two checkboxes per line */
         margin-bottom: 10px;
-        /* Space between rows */
     }
 </style>
 
@@ -56,70 +54,102 @@
         </div>
     </div>
 
+
     <div class="container availability-form">
         <div class="row">
             <div class="col-lg-12 bg-white shadow p-4 rounded">
                 <h5 class="mb-4">Check Room Availability</h5>
+
+                <!-- Filter Form -->
+                @if(!request()->category)
+                <!-- Show Form if the category is not selected -->
                 <form action="{{ route('check.availability') }}" method="GET">
-                    <div class="row align-items-end">
-                        <!-- Room Category Selection -->
-                        <div class="col-lg-3 mb-3">
+                    <div class="row">
+                        <div class="col-md-3">
                             <label for="category" class="form-label" style="font-weight: 500;">Room Category</label>
-                            <select class="form-select shadow-none" name="category" id="category">
+                            <select name="category" id="category" class="form-control">
                                 <option value="">Select Category</option>
                                 @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                 @endforeach
                             </select>
-                            @error('category')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror
                         </div>
 
-                        <!-- Room (Block) Selection -->
-                        <div class="col-lg-3 mb-3">
+                        <div class="col-md-3">
                             <label for="room_no" class="form-label" style="font-weight: 500;">Room</label>
                             <select class="form-select shadow-none" name="room_no" id="room_no">
                                 <option value="">Select Room Number</option>
-                                @foreach($rooms as $room)
+                                @if(request()->category && !empty($roomNumbers))
+                                @foreach($roomNumbers as $room)
                                 <option value="{{ $room->room_no }}" {{ request('room_no') == $room->room_no ? 'selected' : '' }}>
                                     {{ $room->room_no }}
                                 </option>
                                 @endforeach
+                                @endif
                             </select>
                         </div>
 
-                        <!-- Facilities Selection with Checkboxes, Limited to Two Per Line -->
-                        <div class="col-lg-4 mb-3">
-                            <label for="facility" class="form-label" style="font-weight: 500;">Facilities</label>
-                            <div class="d-flex flex-wrap">
+                        <div class="col-md-3">
+                            <label for="facilities" class="form-label" style="font-weight: 500;">Facilities</label>
+                            <select name="facilities[]" id="facilities" class="form-control" multiple>
                                 @foreach($facilities as $facility)
-                                <div class="form-check" style="flex: 0 0 50%; padding-right: 10px;"> <!-- Use 50% width for two items per line -->
-                                    <input class="form-check-input" type="checkbox" name="facilities[]" id="facility{{ $facility->id }}"
-                                        value="{{ $facility->id }}" {{ is_array(request('facilities')) && in_array($facility->id, request('facilities')) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="facility{{ $facility->id }}">
-                                        {{ $facility->name }}
-                                    </label>
-                                </div>
+                                <option value="{{ $facility->id }}" {{ in_array($facility->id, request('facilities', [])) ? 'selected' : '' }}>
+                                    {{ $facility->name }}
+                                </option>
                                 @endforeach
-                            </div>
+                            </select>
                         </div>
 
-                        <!-- Submit Button -->
-                        <div class="col-lg-2 mb-lg-3 mt-2">
-                            <button type="submit" class="btn text-white shadow-none btn-warning">Check Availability</button>
+                        <!-- Button in the same row -->
+                        <div class="col-md-3 d-flex align-items-center" style="font-weight: 800;">
+                            <button type="submit" class="btn btn-warning w-100">Check Availability</button>
                         </div>
                     </div>
                 </form>
+
+                @else
+                <!-- Show Results if the form has been submitted -->
+                <div class="mt-4">
+                    <h3>Available Rooms</h3>
+
+                    @if(isset($rooms) && $rooms->isEmpty())
+                    <p>No rooms available for the selected criteria.</p>
+                    @elseif(isset($rooms) && $rooms->isNotEmpty())
+                    <div class="row">
+                        @foreach($rooms as $room)
+                        <div class="col-md-4 mb-3">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <h5 class="card-title">Room {{ $room->room_no }}</h5>
+                                    <p class="card-text">
+                                        <strong>Category:</strong> {{ $room->category->name }} <br>
+                                        <strong>Capacity:</strong> {{ $room->number_of_members }} <br>
+                                        <strong>Facilities:</strong>
+                                        @foreach($room->facilities as $facility)
+                                        {{ $facility->name }}@if(!$loop->last), @endif
+                                        @endforeach
+                                    </p>
+                                    <a href="{{ route('room.booking', ['room_no' => $room->room_no]) }}" class="btn btn-primary">Book Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <p>Please select criteria to check room availability.</p>
+                    @endif
+                </div>
+                @endif
 
 
 
 
             </div>
+
         </div>
     </div>
+    </div>
+
 
 
 
@@ -323,24 +353,24 @@
                 <div class="bg-white p-4 rounded mb-4 ">
                     <h5>CALL US</h5>
                     <i class="bi bi-telephone-fill"></i>
-                    <a href="tel: +923127557097" class="d-inline-block mb-2 text-decoration-none text-dark">+923127557097</a>
+                    <a href="tel: +923127557097" class="d-inline-block mb-2 text-decoration-none text-dark">+9230012345678</a>
 
                     <br>
                     <i class="bi bi-telephone-fill"></i>
-                    <a href="tel: +923127557097" class="d-inline-block text-decoration-none text-dark">+923127557097</a>
+                    <a href="tel: +923127557097" class="d-inline-block text-decoration-none text-dark">+923000050090</a>
 
                 </div>
                 <div class="bg-white p-4 rounded mb-4 ">
                     <h5>Follow US</h5>
-                    <a href="#" class="d-inline-block mb-3">
-                        <i class="bi bi-twitter"></i><span class="badge bg-light text-dark fs-6 p-2">Twitter</span>
-                    </a>
-                    <br>
-                    <a href="#" class="d-inline-block mb-3">
+                    <a href="https://www.facebook.com/" class="d-inline-block mb-3">
                         <i class="bi bi-facebook"></i><span class="badge bg-light text-dark fs-6 p-2">Facebook</span>
                     </a>
                     <br>
-                    <a href="#" class="d-inline-block mb-3">
+                    <a href="https://www.linkedin.com/" class="d-inline-block mb-3">
+                        <i class="bi bi-linkedin"></i><span class="badge bg-light text-dark fs-6 p-2">LinkedIn</span>
+                    </a>
+                    <br>
+                    <a href="https://www.instagram.com/" class="d-inline-block mb-3">
                         <i class="bi bi-instagram"></i><span class="badge bg-light text-dark fs-6 p-2">Instagram</span>
                     </a>
 
@@ -355,6 +385,31 @@
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    // This script dynamically updates room numbers based on the selected category
+    document.getElementById('category').addEventListener('change', function() {
+        const categoryId = this.value;
+        const roomNoSelect = document.getElementById('room_no');
+
+        // Clear existing room options
+        roomNoSelect.innerHTML = '<option value="">Select Room Number</option>';
+
+        if (categoryId) {
+            // Fetch room numbers related to the selected category via AJAX
+            fetch(`/api/rooms/${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.roomNumbers.forEach(room => {
+                        const option = document.createElement('option');
+                        option.value = room.room_no;
+                        option.textContent = room.room_no;
+                        roomNoSelect.appendChild(option);
+                    });
+                });
+        }
+    });
+</script>
+
 <script>
     var swiper = new Swiper(".Swiper-container", {
         spaceBetween: 30,

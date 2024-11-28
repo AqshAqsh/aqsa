@@ -45,7 +45,7 @@
                                 <button type="submit" class="btn btn-danger p-1">Delete</button>
                             </form>
                         </a>
-                        <a href="{{ route('admin.user.update', $value->user_id) }}" class="btn btn-primary p-2">Edit</a>
+                        <a href="{{ route('admin.user.edit', $value->user_id) }}" class="btn btn-primary p-2">Edit</a>
 
 
 

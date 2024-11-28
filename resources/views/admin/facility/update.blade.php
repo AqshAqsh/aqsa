@@ -9,7 +9,7 @@ Facility Update
     <div class="row" id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>Facility Update</h3>
+                <h3 class="mt-2 mr-3">Facility Update</h3>
                 <a href="{{ route('admin.facility.list') }}" class="btn purchase-button">Go Back</a>
             </span>
         </div>

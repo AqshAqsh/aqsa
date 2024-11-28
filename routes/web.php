@@ -32,9 +32,12 @@ use Illuminate\Support\Facades\Mail;
 Route::get('/', function () {
     return view('welcome');
 })->middleware('guest');
-Route::middleware(['HandleTabSessions'])->group(function () {
-    Route::get('/home', [LoginController::class, 'index']);
+
+Route::get('/api/rooms/{categoryId}', function ($categoryId) {
+    $roomNumbers = \App\Models\Room::where('room_category_id', $categoryId)->get(['room_no']);
+    return response()->json(['roomNumbers' => $roomNumbers]);
 });
+
 
 Route::get('/forgot-user-id', [LoginController::class, 'showForgotIdForm'])->name('forgot.user.id');
 Route::post('/forgot-user-id', [LoginController::class, 'processForgotId'])->name('forgot.user.id.submit');
@@ -51,7 +54,7 @@ Route::prefix('user')->group(function () {
     Route::get('/contactus', [FeedbackController::class, 'contact'])->name('contact');
     Route::get('/aboutus', [AboutController::class, 'about'])->name('about');
 
-    
+
 
 
     Route::middleware('auth:web')->group(function () {
@@ -71,13 +74,9 @@ Route::prefix('user')->group(function () {
         Route::delete('/booking/{id}/delete', [BookingController::class, 'deleteBooking'])->name('booking.delete');
         Route::get('/notice', [UserController::class, 'showNotice'])->name('notice');
         Route::post('/notice/{noticeId}/mark-as-read', [UserController::class, 'markAsRead'])->name('notices.markAsRead');
-        Route::get('/check-availability', [RoomController::class, 'checkAvailability'])->name('check.availability');
-
-        //Route::get('/user/rooms', [UserHomeController::class, 'showRoomsWithFilters'])->name('rooms.filter');
+        Route::get('/check-availability', [UserHomeController::class, 'checkAvailability'])->name('check.availability');
+        Route::get('/filterRooms', [RoomController::class, 'filterRooms'])->name('rooms.filter');
         //Route::get('/rooms/search', [RoomController::class, 'search'])->name('room.search');
-        //Route::get('/get-room-block/{room_no}', [RoomController::class, 'getRoomBlock']);
-        //Route::get('/get-available-beds/{room_no}', [RoomController::class, 'getAvailableBeds']);
-        //Route::get('/rooms/{room}', [RoomController::class, 'showavail'])->name('room.show');
         //Route::get('/get-room-details/{room_no}', [RoomController::class, 'getRoomDetails']);
     });
 });

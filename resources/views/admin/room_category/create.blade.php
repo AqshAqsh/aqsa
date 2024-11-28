@@ -9,7 +9,7 @@ Room Category Create
     <div class="row " id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>Room Category Create</h3>
+                <h3 class="mt-2 mr-3">Room Category Create</h3>
                 <a href="{{ route('admin.room_category.list') }}" class="btn purchase-button">Go Back</a>
             </span>
         </div>

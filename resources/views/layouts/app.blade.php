@@ -40,20 +40,21 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active me-2" href="{{ route('home') }}">Home</a>
+                            <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }} me-2" href="{{ route('home') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link me-2" href="{{ route('room') }}">Rooms</a>
+                            <a class="nav-link {{ request()->routeIs('room') ? 'active' : '' }} me-2" href="{{ route('room') }}">Rooms</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link me-2" href="{{ route('facilities') }}">Facilities</a>
+                            <a class="nav-link {{ request()->routeIs('facilities') ? 'active' : '' }} me-2" href="{{ route('facilities') }}">Facilities</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link me-2" href="{{ route('contact') }}">Contact us</a>
+                            <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }} me-2" href="{{ route('contact') }}">Contact us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link me-2" href="{{ route('about') }}">About</a>
+                            <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }} me-2" href="{{ route('about') }}">About</a>
                         </li>
+
                     </ul>
 
                     <ul class="navbar-nav navbar-nav-right">
@@ -97,7 +98,7 @@
                                         <span>Profile</span>
                                         <span class="p-0">
                                             <span class="badge badge-success"></span>
-                                            <i class="bi bi-person-fill"></i>                                        </span>
+                                            <i class="bi bi-person-fill"></i> </span>
                                     </a>
                                     <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{route('user.notifications') }}">
                                         <span>Alerts</span>

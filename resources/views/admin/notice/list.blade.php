@@ -23,7 +23,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>#</th>
                                     <th>Title</th>
                                     <th>date</th>
                                     <th>Content</th>
@@ -33,7 +33,7 @@
                             <tbody>
                                 @foreach ($notices as $notice)
                                     <tr>
-                                        <td>{{ $notice->id }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $notice->title }}</td>
                                         <td>{{ $notice->date }}</td>
                                         <td class="description-scroll">{{ $notice->content }}</td>

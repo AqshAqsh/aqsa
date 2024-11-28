@@ -59,7 +59,7 @@
             <a class="nav-link {{ request()->routeIs('admin.facility.list') ? 'active' : '' }}" href="{{ route('admin.facility.list') }}">Facility</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('admin.bed.show') ? 'active' : '' }}" href="{{ route('admin.bed.show') }}">Assign Bed</a>
+            <a class="nav-link {{ request()->routeIs('admin.bed.show') ? 'active' : '' }}" href="{{ route('admin.bed.show') }}">Bed Assigned</a>
           </li>
         </ul>
       </div>

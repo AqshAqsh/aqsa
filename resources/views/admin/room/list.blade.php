@@ -9,7 +9,7 @@ Rooms List
     <div class="row " id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>Rooms</h3>
+                <h3 class="mt-2 mr-3">Rooms</h3>
                 <a href="{{ route('admin.room.create') }}" class="btn purchase-button">Add New</a>
             </span>
         </div>

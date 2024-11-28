@@ -21,17 +21,17 @@ Providing a seamless and hassle-free hostel management experience for residents 
         </div>
         <div class="col-lg-4 col-md-4 p-4 text-center">
             <h5 class="mb-3 fw-bold">Follow Us</h5>
-            <a href="#" class="text-dark text-decoration-none d-inline-block mb-2">
+            <a href="https://www.facebook.com/" class="text-dark text-decoration-none d-inline-block mb-2">
                 <i class="bi bi-facebook me-1"></i>Facebook
             </a>
             <br>
-            <a href="#" class="text-dark text-decoration-none d-inline-block mb-2">
+            <a href="https://www.instagram.com/" class="text-dark text-decoration-none d-inline-block mb-2">
                 <i class="bi bi-instagram me-1"></i>Instagram
             </a><br>
-            <a href="#" class="text-dark text-decoration-none d-inline-block mb-2">
+            <a href="" class="text-dark text-decoration-none d-inline-block mb-2">
                 <i class="bi bi-twitter me-1"></i>Twitter
             </a><br>
-            <a href="#" class="text-dark text-decoration-none d-inline-block">
+            <a href="https://www.linkedin.com/" class="text-dark text-decoration-none d-inline-block">
                 <i class="bi bi-linkedin me-1"></i>linkedIn
             </a><br>
         </div>
@@ -39,6 +39,6 @@ Providing a seamless and hassle-free hostel management experience for residents 
  </div>
 
 
- <h6 class="text-center text-white p-3 m-0 fw-bold fs-5" style="background-color: #061B2F;">Good Luck ResideMe Project </h6>
+ <h6 class="text-center p-3 m-0 fw-bold fs-6 text-muted" >Copyright © <a  class="float-none mt-1 mt-sm-0 " href="http://127.0.0.1:8000/" target="_blank">ResideMe</a> .com Btach 2020-2024 </h6>
 
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

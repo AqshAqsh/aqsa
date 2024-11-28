@@ -13,7 +13,6 @@ class RoomCategory extends Model
 
     protected $fillable = ['name'];
 
-    // Relationship to Room
     public function rooms()
     {
         return $this->hasMany(Room::class, 'room_category_id');

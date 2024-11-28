@@ -44,20 +44,21 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active me-2" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }} me-2" href="{{ route('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link me-2" href="{{ route('room') }}">Rooms</a>
+                        <a class="nav-link {{ request()->routeIs('room') ? 'active' : '' }} me-2" href="{{ route('room') }}">Rooms</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link me-2" href="{{ route('facilities') }}">Facilities</a>
+                        <a class="nav-link {{ request()->routeIs('facilities') ? 'active' : '' }} me-2" href="{{ route('facilities') }}">Facilities</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link me-2" href="{{ route('contact') }}">Contact us</a>
+                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }} me-2" href="{{ route('contact') }}">Contact us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link me-2" href="{{ route('about') }}">About</a>
+                        <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }} me-2" href="{{ route('about') }}">About</a>
                     </li>
+
                 </ul>
 
                 <ul class="navbar-nav navbar-nav-right">
@@ -69,364 +70,321 @@
             </div>
         </div>
     </nav>
-        <div class="container-fluid pl-lg-3 px-lg-4 mt-4">
-            <div class="swiper Swiper-container">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <img src="{{ asset('images/welcomebanner.jpg') }}" class="w-100 d-block" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('images/building.jpg') }}" class="w-100 d-block" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('images/outside.jpg') }}" class="w-100 d-block" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('images/dininghall.jpg') }}" class="w-100 d-block" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('images/reception.jpg') }}" class="w-100 d-block" />
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{{ asset('images/studyroom.jpg') }}" class="w-100 d-block" />
-                    </div>
+    <div class="container-fluid pl-lg-3 px-lg-4 mt-4">
+        <div class="swiper Swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img src="{{ asset('images/welcomebanner.jpg') }}" class="w-100 d-block" />
+                </div>
+                <div class="swiper-slide">
+                    <img src="{{ asset('images/building.jpg') }}" class="w-100 d-block" />
+                </div>
+                <div class="swiper-slide">
+                    <img src="{{ asset('images/outside.jpg') }}" class="w-100 d-block" />
+                </div>
+                <div class="swiper-slide">
+                    <img src="{{ asset('images/dininghall.jpg') }}" class="w-100 d-block" />
+                </div>
+                <div class="swiper-slide">
+                    <img src="{{ asset('images/reception.jpg') }}" class="w-100 d-block" />
+                </div>
+                <div class="swiper-slide">
+                    <img src="{{ asset('images/studyroom.jpg') }}" class="w-100 d-block" />
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="container availability-form">
-            <div class="row">
-                <div class="col-lg-12 bg-white shadow p-4 rounded">
-                    <h5 class="mb-4">Check Room Availability</h5>
-                    <form action="" method="GET">
-                        <div class="row align-items-end">
-                            <div class="col-lg-3 mb-3">
-                                <label class="form-label " style="font-weight: 500;">Block</label>
-                                <select class="form-select shadow-none" name="block">
-                                    <option selected>select</option>
-                                    <option value="1">A</option>
-                                    <option value="2">B</option>
-                                    <option value="3">C</option>
-                                    <option value="4">D</option>
-                                </select>
-                            </div>
-                            <div class="col-lg-3 mb-3">
-                                <label class="form-label " style="font-weight: 500;">Room Category</label>
-                                <input type="text" class="form-control shadow-none" name="category">
-                            </div>
-                            <div class="col-lg-4 mb-3">
-                                <label class="form-label " style="font-weight: 500;">Facilities</label>
-                                <select class="form-select shadow-none" name="facility">
-                                    <option selected>Open this select Facilities</option>
-                                    <option value="1">Wifi</option>
-                                    <option value="2">Television</option>
-                                    <option value="3">Cooler</option>
-                                </select>
-                            </div>
+    <div class="container availability-form">
+        <div class="row">
+            <div class="col-lg-12 bg-white shadow p-4 rounded">
+                <h5 class="mb-4">Check Room Availability</h5>
+                <form action="" method="GET">
+                    <div class="row align-items-end">
+                        <div class="col-lg-3 mb-3">
+                            <label class="form-label " style="font-weight: 500;">Block</label>
+                            <select class="form-select shadow-none" name="block">
+                                <option selected>select</option>
+                                <option value="1">A</option>
+                                <option value="2">B</option>
+                                <option value="3">C</option>
+                                <option value="4">D</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 mb-3">
+                            <label class="form-label " style="font-weight: 500;">Room Category</label>
+                            <input type="text" class="form-control shadow-none" name="category">
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label class="form-label " style="font-weight: 500;">Facilities</label>
+                            <select class="form-select shadow-none" name="facility">
+                                <option selected>Open this select Facilities</option>
+                                <option value="1">Wifi</option>
+                                <option value="2">Television</option>
+                                <option value="3">Cooler</option>
+                            </select>
+                        </div>
 
-                            <div class="col-lg-2 mb-lg-3 mt-2">
-                                <button type="submit" class="btn text-white shadow-none btn-warning">Check Availability</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <section id="testimonials-section">
-            <div class="testimonials-container mt-5">
-                <div class="my-5 px-4">
-                    <h2 class="fw-bold h-font text-center">See What Makes ResideMe Special</h2>
-                    <div class="h-line bg-dark"></div>
-                </div>
-                <div class="swiper-container testimonials-swiper">
-                    <div class="swiper-wrapper mb-15">
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/cctv.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">CCTV </h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/Laundaryroom.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">Laundary Room</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/garden.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">Our Garden</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/corridor.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">ResideMe CorriDoor</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/safety.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">ResideMe Safety</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/dininghall.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">ResideMe Safety</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/outside.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">outside</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/studyroom.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">Student's StudyRoom</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/welcomebanner.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">ResideMe Enterance</h6>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="{{ asset('images/reception.jpg') }}" width="30px">
-                                <h6 class="m-0 ms-0">ResideMe Reception</h6>
-                            </div>
+                        <div class="col-lg-2 mb-lg-3 mt-2">
+                            <button type="submit" class="btn text-white shadow-none btn-warning">Check Availability</button>
                         </div>
                     </div>
-                    <div class="swiper-pagination"></div>
-
-                </div>
-
-            </div>
-        </section>
-
-        <div class="my-5 px-4">
-            <h2 class="fw-bold h-font text-center">Our Facilities</h2>
-            <div class="h-line bg-dark"></div>
-        </div>
-
-        <div class="container">
-            <div class="row justify-content-evenly px-lg-0 px-md-0 px-5">
-                <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
-                    <img src="{{ asset('images/wifi.svg') }}" width="80px">
-                    <h5 class="mt-3"> wifi</h5>
-                </div>
-                <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
-                    <img src="{{ asset('images/ac.svg') }}" width="80px">
-                    <h5 class="mt-3"> AC</h5>
-                </div>
-                <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
-                    <img src="{{ asset('images/heater.svg') }}" width="80px">
-                    <h5 class="mt-3"> Heater</h5>
-                </div>
-                <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
-                    <img src="{{ asset('images/television.svg') }}" width="80px">
-                    <h5 class="mt-3"> Television</h5>
-                </div>
-                <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
-                    <img src="{{ asset('images/cooler.svg') }}" width="80px">
-                    <h5 class="mt-3"> Cooler</h5>
-                </div>
-                <div class="col-lg-12 text-center mt-5">
-                    <a href="{{ route('facilities') }}" class="btn btn-sm btn-outline-dark fw-bold shadow-none rounded-0 ">MORE Facilities>>></a>
-                </div>
-
+                </form>
             </div>
         </div>
-        <div class="my-5 px-4">
-            <h2 class="fw-bold h-font text-center">What Our Users Say</h2>
-            <div class="h-line bg-dark"></div>
-        </div>
-        <div class="container mt-5">
-            <div class="swiper swiper-testimonial ">
-                <div class="swiper-wrapper mb-5">
-                    <div class="swiper-slide bg-white p-4">
-                        <div class="profile d-flex align-items-center mb-3">
+    </div>
 
-                            <div class="nav-profile-img1">
-                                <img src="{{ asset('images/face5.jpg') }}" alt="image">
-                            </div>
-                            <div class="nav-profile-text1">
-                                <p class="mb-1 text-black"> Aqsa Rahman, Resident </p>
-                            </div>
-
-                        </div>
-                        <p>ResideMe has made my booking process seamless and stress-free.
-                            I no longer need to worry about finding the perfect room!</p>
-                        <div class="rating">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
+    <section id="testimonials-section">
+        <div class="testimonials-container mt-5">
+            <div class="my-5 px-4">
+                <h2 class="fw-bold h-font text-center">See What Makes ResideMe Special</h2>
+                <div class="h-line bg-dark"></div>
+            </div>
+            <div class="swiper-container testimonials-swiper">
+                <div class="swiper-wrapper mb-15">
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/cctv.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">CCTV </h6>
                         </div>
                     </div>
-                    <div class="swiper-slide bg-white p-4">
-                        <div class="profile d-flex align-items-center mb-3">
-
-                            <div class="nav-profile-img1">
-                                <img src="{{ asset('images/face4.jpg') }}" alt="image">
-                            </div>
-                            <div class="nav-profile-text1">
-                                <p class="mb-1 text-black"> Ali Khan, Hostel Manager</p>
-                            </div>
-
-                        </div>
-
-                        <p>As a hostel manager, ResideMe has simplified the way I handle bookings,
-                            facilities, and communication with residents. It's an invaluable tool!</p>
-                        <div class="rating">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/Laundaryroom.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">Laundary Room</h6>
                         </div>
                     </div>
-                    <div class="swiper-slide bg-white p-4">
-                        <div class="profile d-flex align-items-center mb-3">
-
-                            <div class="nav-profile-img1">
-                                <img src="{{ asset('images/face6.jpg') }}" alt="image">
-                            </div>
-                            <div class="nav-profile-text1">
-                                <p class="mb-1 text-black"> Sarah Lee, Resident</p>
-                            </div>
-
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/garden.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">Our Garden</h6>
                         </div>
-                        <p>The best part of ResideMe is the user-friendly interface.
-                            It’s easy to navigate, even for those who aren’t tech-savvy!</p>
-                        <div class="rating">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/corridor.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe CorriDoor</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/safety.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Safety</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/dininghall.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Safety</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/outside.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">outside</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/studyroom.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">Student's StudyRoom</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/welcomebanner.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Enterance</h6>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testimonial-item">
+                            <img src="{{ asset('images/reception.jpg') }}" width="30px">
+                            <h6 class="m-0 ms-0">ResideMe Reception</h6>
                         </div>
                     </div>
                 </div>
                 <div class="swiper-pagination"></div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <div class="my-5 px-4">
+        <h2 class="fw-bold h-font text-center">Our Facilities</h2>
+        <div class="h-line bg-dark"></div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-evenly px-lg-0 px-md-0 px-5">
+            <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
+                <img src="{{ asset('images/wifi.svg') }}" width="80px">
+                <h5 class="mt-3"> wifi</h5>
+            </div>
+            <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
+                <img src="{{ asset('images/ac.svg') }}" width="80px">
+                <h5 class="mt-3"> AC</h5>
+            </div>
+            <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
+                <img src="{{ asset('images/heater.svg') }}" width="80px">
+                <h5 class="mt-3"> Heater</h5>
+            </div>
+            <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
+                <img src="{{ asset('images/television.svg') }}" width="80px">
+                <h5 class="mt-3"> Television</h5>
+            </div>
+            <div class="col-lg-2 col-md-2 bg-white rounded shadow py-4 my3 text-center">
+                <img src="{{ asset('images/cooler.svg') }}" width="80px">
+                <h5 class="mt-3"> Cooler</h5>
             </div>
             <div class="col-lg-12 text-center mt-5">
-                <a href="{{route('about')}}" class="btn btn-sm btn-outline-dark fw-bold shadow-none rounded-0  ">KNOW MORE>>></a>
+                <a href="{{ route('facilities') }}" class="btn btn-sm btn-outline-dark fw-bold shadow-none rounded-0 ">MORE Facilities>>></a>
             </div>
-        </div>
-        <div class="my-5 px-4">
-            <h2 class="fw-bold h-font text-center">Reach Us</h2>
-            <div class="h-line bg-dark"></div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-md-8 bg-white rounded mb-lg-0 p-4 ">
-                    <iframe class="w-100 rounded" height="320px" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3377.5295951066378!2d74.19896347543325!3d32.16299082392641!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391f2a1b7a50fc9b%3A0x202625f2cca04e32!2sGovernment%20College%2C%20Gujranwala!5e0!3m2!1sen!2s!4v1720677886636!5m2!1sen!2s" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-                <div class="col-lg-4 col-md-4">
-                    <div class="bg-white p-4 rounded mb-4 ">
-                        <h5>CALL US</h5>
-                        <i class="bi bi-telephone-fill"></i>
-                        <a href="tel: +923127557097" class="d-inline-block mb-2 text-decoration-none text-dark">+923127557097</a>
 
-                        <br>
-                        <i class="bi bi-telephone-fill"></i>
-                        <a href="tel: +923127557097" class="d-inline-block text-decoration-none text-dark">+923127557097</a>
+        </div>
+    </div>
+    <div class="my-5 px-4">
+        <h2 class="fw-bold h-font text-center">What Our Users Say</h2>
+        <div class="h-line bg-dark"></div>
+    </div>
+    <div class="container mt-5">
+        <div class="swiper swiper-testimonial ">
+            <div class="swiper-wrapper mb-5">
+                <div class="swiper-slide bg-white p-4">
+                    <div class="profile d-flex align-items-center mb-3">
+
+                        <div class="nav-profile-img1">
+                            <img src="{{ asset('images/face5.jpg') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text1">
+                            <p class="mb-1 text-black"> Aqsa Rahman, Resident </p>
+                        </div>
 
                     </div>
-                    <div class="bg-white p-4 rounded mb-4 ">
-                        <h5>Follow US</h5>
-                        <a href="#" class="d-inline-block mb-3">
-                            <i class="bi bi-twitter"></i><span class="badge bg-light text-dark fs-6 p-2">Twitter</span>
-                        </a>
-                        <br>
-                        <a href="#" class="d-inline-block mb-3">
-                            <i class="bi bi-facebook"></i><span class="badge bg-light text-dark fs-6 p-2">Facebook</span>
-                        </a>
-                        <br>
-                        <a href="#" class="d-inline-block mb-3">
-                            <i class="bi bi-instagram"></i><span class="badge bg-light text-dark fs-6 p-2">Instagram</span>
-                        </a>
+                    <p>ResideMe has made my booking process seamless and stress-free.
+                        I no longer need to worry about finding the perfect room!</p>
+                    <div class="rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                </div>
+                <div class="swiper-slide bg-white p-4">
+                    <div class="profile d-flex align-items-center mb-3">
 
-                        <br>
+                        <div class="nav-profile-img1">
+                            <img src="{{ asset('images/face4.jpg') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text1">
+                            <p class="mb-1 text-black"> Ali Khan, Hostel Manager</p>
+                        </div>
 
+                    </div>
 
+                    <p>As a hostel manager, ResideMe has simplified the way I handle bookings,
+                        facilities, and communication with residents. It's an invaluable tool!</p>
+                    <div class="rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                </div>
+                <div class="swiper-slide bg-white p-4">
+                    <div class="profile d-flex align-items-center mb-3">
+
+                        <div class="nav-profile-img1">
+                            <img src="{{ asset('images/face6.jpg') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text1">
+                            <p class="mb-1 text-black"> Sarah Lee, Resident</p>
+                        </div>
+
+                    </div>
+                    <p>The best part of ResideMe is the user-friendly interface.
+                        It’s easy to navigate, even for those who aren’t tech-savvy!</p>
+                    <div class="rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
                     </div>
                 </div>
             </div>
+            <div class="swiper-pagination"></div>
         </div>
+        <div class="col-lg-12 text-center mt-5">
+            <a href="{{route('about')}}" class="btn btn-sm btn-outline-dark fw-bold shadow-none rounded-0  ">KNOW MORE>>></a>
+        </div>
+    </div>
+    <div class="my-5 px-4">
+        <h2 class="fw-bold h-font text-center">Reach Us</h2>
+        <div class="h-line bg-dark"></div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 bg-white rounded mb-lg-0 p-4 ">
+                <iframe class="w-100 rounded" height="320px" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3377.5295951066378!2d74.19896347543325!3d32.16299082392641!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391f2a1b7a50fc9b%3A0x202625f2cca04e32!2sGovernment%20College%2C%20Gujranwala!5e0!3m2!1sen!2s!4v1720677886636!5m2!1sen!2s" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <div class="bg-white p-4 rounded mb-4 ">
+                    <h5>CALL US</h5>
+                    <i class="bi bi-telephone-fill"></i>
+                    <a href="tel: +923127557097" class="d-inline-block mb-2 text-decoration-none text-dark">+9230012345678</a>
+
+                    <br>
+                    <i class="bi bi-telephone-fill"></i>
+                    <a href="tel: +923127557097" class="d-inline-block text-decoration-none text-dark">+923000050090</a>
+
+                </div>
+                <div class="bg-white p-4 rounded mb-4 ">
+                    <h5>Follow US</h5>
+                    <a href="https://www.facebook.com/" class="d-inline-block mb-3">
+                        <i class="bi bi-facebook"></i><span class="badge bg-light text-dark fs-6 p-2">Facebook</span>
+                    </a>
+                    <br>
+                    <a href="https://www.linkedin.com/" class="d-inline-block mb-3">
+                        <i class="bi bi-linkedin"></i><span class="badge bg-light text-dark fs-6 p-2">LinkedIn</span>
+                    </a>
+                    <br>
+                    <a href="https://www.instagram.com/" class="d-inline-block mb-3">
+                        <i class="bi bi-instagram"></i><span class="badge bg-light text-dark fs-6 p-2">Instagram</span>
+                    </a>
+
+                    <br>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        <script>
-            var swiper = new Swiper(".Swiper-container", {
-                spaceBetween: 30,
-                effect: "fade",
-                loop: true,
-                autoplay: {
-                    delay: 3500,
-                    disableOnInteraction: false,
-                }
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper(".Swiper-container", {
+            spaceBetween: 30,
+            effect: "fade",
+            loop: true,
+            autoplay: {
+                delay: 3500,
+                disableOnInteraction: false,
+            }
 
-            });
-            // Initialize the Swiper for the Testimonials Section
-            document.addEventListener('DOMContentLoaded', function() {
-                const testimonialSwiper = new Swiper('.testimonials-swiper', {
-                    effect: "coverflow",
-                    loop: true,
-                    grabCursor: true,
-                    slidesPerView: 1,
-                    spaceBetween: 30,
-                    coverflowEffect: {
-                        rotate: 50,
-                        stretch: 0,
-                        depth: 100,
-                        modifier: 1,
-                        slideShadows: false,
-                    },
-                    pagination: {
-                        el: '.swiper-pagination',
-                        clickable: true,
-                    },
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
-                    autoplay: {
-                        delay: 2000,
-                        disableOnInteraction: false,
-                    },
-                    breakpoints: {
-                        320: {
-                            slidesPerView: 1,
-                        },
-                        640: {
-                            slidesPerView: 1,
-                        },
-                        768: {
-                            slidesPerView: 2,
-                        },
-                        1024: {
-                            slidesPerView: 3,
-                        },
-                    },
-                });
-            });
-
-
-            var swiper = new Swiper(".swiper-testimonial", {
+        });
+        // Initialize the Swiper for the Testimonials Section
+        document.addEventListener('DOMContentLoaded', function() {
+            const testimonialSwiper = new Swiper('.testimonials-swiper', {
                 effect: "coverflow",
+                loop: true,
                 grabCursor: true,
-                centeredSlides: true,
-                slidesPerView: "auto",
-                slidesPerView: "3",
+                slidesPerView: 1,
+                spaceBetween: 30,
                 coverflowEffect: {
                     rotate: 50,
                     stretch: 0,
@@ -435,7 +393,16 @@
                     slideShadows: false,
                 },
                 pagination: {
-                    el: ".swiper-pagination",
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                autoplay: {
+                    delay: 2000,
+                    disableOnInteraction: false,
                 },
                 breakpoints: {
                     320: {
@@ -449,12 +416,46 @@
                     },
                     1024: {
                         slidesPerView: 3,
-                    }
-                }
+                    },
+                },
             });
-        </script>
-@extends('layouts.footer')
+        });
 
-    </body>
+
+        var swiper = new Swiper(".swiper-testimonial", {
+            effect: "coverflow",
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: "auto",
+            slidesPerView: "3",
+            coverflowEffect: {
+                rotate: 50,
+                stretch: 0,
+                depth: 100,
+                modifier: 1,
+                slideShadows: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+            },
+            breakpoints: {
+                320: {
+                    slidesPerView: 1,
+                },
+                640: {
+                    slidesPerView: 1,
+                },
+                768: {
+                    slidesPerView: 2,
+                },
+                1024: {
+                    slidesPerView: 3,
+                }
+            }
+        });
+    </script>
+    @extends('layouts.footer')
+
+</body>
 
 </html>

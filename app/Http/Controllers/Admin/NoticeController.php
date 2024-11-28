@@ -17,8 +17,8 @@ class NoticeController extends Controller
 {
     public function index()
     {
-        // Fetch notices that are not expired
-        $notices = Notices::where('expiry_date', '>=', Carbon::now())->latest()->get();
+        //$notices = Notices::where('expiry_date', '>=', Carbon::now())->latest()->get();
+        $notices = Notices::latest()->get();
         return view('admin.notice.list', compact('notices'));
     }
 

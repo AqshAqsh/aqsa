@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\BedManager\RoomController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +19,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+// Fetch rooms for a selected category
+Route::get('/rooms/{categoryId}', [RoomController::class, 'getRoomsByCategory']);
+
+// Fetch room details including block name and beds for a given room number
+Route::get('/room/details/{roomNo}', [RoomController::class, 'getRoomDetails']);
+

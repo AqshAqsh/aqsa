@@ -17,13 +17,11 @@ class User extends Authenticatable
     /**
      * @var string
      */
-    protected $primaryKey = 'user_id';  // Set the primary key to 'user_id'
+    protected $primaryKey = 'user_id';  
 
     /**
-     * Indicates if the ID is auto-incrementing.
      *
      * @var bool
-     * The attributes that are mass assignable.
      *
      * @var array
      */
