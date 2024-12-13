@@ -95,6 +95,7 @@
             </div>
         </div>
     </div>
+    
 </div>
 
 
@@ -112,7 +113,7 @@
                     <div class="col-lg-3 col-md-12 mb-lg-0 mb-4 px-lg-0">
                         <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow">
                             <div class="container-fluid flex-lg-column align-items-stretch">
-                                <h4 class="mt-2">FILTER</h4>
+                                <h4 class="fw-bold h-font mt-2">FILTER</h4>
                                 <hr><br>
 
                                 <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterdropdown" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,7 +157,7 @@
                                         </div>
 
                                         <!-- Number of Beds (Dynamic based on selected room) -->
-                                        <div>
+                                        <div class="form-group">
                                             <label for="beds">Number of Beds:</label>
                                             <select name="beds" id="beds" class="form-control">
                                                 <option value="">Select a Bed No</option>
@@ -171,7 +172,7 @@
                                         </div>
 
                                         <!-- Submit Button -->
-                                        <div>
+                                        <div class="form-group">
                                             <button type="submit" class="btn btn-warning">Search Rooms</button>
                                         </div>
                                     </form>
@@ -265,7 +266,12 @@
                 </div>
             </div>
         </div>
+        <!-- Add pagination links -->
+<div class="pagination">
+    {{ $rooms->links('vendor.pagination.default') }}
+</div>
     </div>
+
 </div>
 
 
@@ -287,7 +293,6 @@
             fetch(`/api/rooms/${categoryId}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Dynamically populate room numbers
                     data.rooms.forEach(room => {
                         const option = document.createElement('option');
                         option.value = room.room_no;

@@ -23,7 +23,7 @@ Rooms List
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                            <th>#</th>
+                                <th>#</th>
 
                                 <th>Room Picture</th>
                                 <th>Room No</th>
@@ -35,7 +35,7 @@ Rooms List
                         <tbody>
                             @foreach ($rooms as $room)
                             <tr>
-                            <td>{{ $loop->iteration }}</td>
+                                <td>{{ $loop->iteration }}</td>
 
                                 <td> @if($room->picture)
                                     <img src="{{ asset('storage/' . $room->picture) }}" alt="Room pic" width="50" height="50">
@@ -52,8 +52,14 @@ Rooms List
                                 <td>
                                     <a href="{{ route('admin.room.edit', ['id' => $room->id]) }}"
                                         class="btn btn-success">Edit</a>
-                                    <a href="{{ route('admin.room.delete', ['id' => $room->id]) }}"
-                                        class="btn btn-danger">Delete</a>
+                                    <a class="btn btn-danger p-1">
+
+                                        <form action="{{ route('admin.room.delete', ['id' => $room->id]) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger p-1">Delete</button>
+                                        </form>
+                                    </a>
                                 </td>
                             </tr>
                             @endforeach

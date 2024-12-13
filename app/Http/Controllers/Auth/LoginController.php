@@ -27,26 +27,26 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // Validate the input fields
         $request->validate([
-            'user_id' => 'required|string|exists:users,user_id',  // Check if user_id exists in the users table
+            'user_id' => 'required|string',
+            'email' => 'required|email', 
         ]);
 
-        // Retrieve the user using user_id
-        $user = User::where('user_id', $request->input('user_id'))->first();
+        $user = User::where('user_id', $request->input('user_id'))
+            ->where('email', $request->input('email'))
+            ->first();
 
-        // Check if the user exists
         if ($user) {
-            // Log the user in
             Auth::login($user);
 
-            // Redirect to the desired page after successful login
             return redirect()->route('home')->with('success', 'Logged in successfully!');
         }
 
-        // If user not found, return back with an error message
-        return back()->withErrors(['user_id' => 'Invalid User ID.']);
+        return redirect()->back()->withErrors([
+        'error' => 'Either email or user_id is incorrect.',
+        ]);
     }
+
     public function userLogout(Request $request)
     {
         Auth::logout();

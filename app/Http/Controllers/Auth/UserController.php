@@ -92,11 +92,21 @@ class UserController extends Controller
     public function showProfile()
     {
         $user = auth()->user();
-        return view('profile', compact('user'));
+        $currentYear = date('Y');
+        $enrollmentYear = $user->enrollment_year;
+
+        // Calculate years since enrollment
+        $yearsSinceEnrollment = $currentYear - $enrollmentYear;
+        $semesters = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4'];
+
+        // Pass this data to the view
+        return view('profile', compact('user', 'yearsSinceEnrollment','semesters'));
     }
+
 
     public function updateProfile(Request $request)
     {
+        // Validate the input fields
         $request->validate([
             'full_name' => 'required|string|max:255|regex:/^[\S\s]+$/',  // Ensures no space character allowed
             'gender' => 'required|in:Male,Female,Other',
@@ -104,7 +114,7 @@ class UserController extends Controller
             'contact_number' => 'required|regex:/^[0-9]{11}$/|min:11|max:11',
             'permanent_address' => 'required|string',
             'current_address' => 'required|string',
-            'college_roll_number' => 'required|string',  // Ensures roll number is unique
+            'college_roll_number' => 'required|string',
             'college_department' => 'required|string',
             'semester' => 'required|string',
             'program' => 'required|string',
@@ -115,37 +125,33 @@ class UserController extends Controller
             'guardian_name' => 'required|string',
             'guardian_contact_number' => 'required|regex:/^[0-9]{11}$/|min:11|max:11',
             'guardian_address' => 'required|string',
-            'user_picture' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'user_picture' => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Make 'user_picture' nullable to allow updates without an image
         ], [
             'date_of_birth.before' => 'You must be at least 18 years old.',
             'college_roll_number.unique' => 'This roll number has already been taken.',
             'enrollment_year.between' => 'Enrollment year must be between 2000 and the current year.',
         ]);
 
-        // Check if date_of_birth is at least 18 years ago
         $birthDate = Carbon::parse($request->date_of_birth);
         $age = Carbon::now()->diffInYears($birthDate);
         if ($age < 18) {
             return back()->withErrors(['date_of_birth' => 'You must be at least 18 years old.']);
         }
 
-        // Adjust the semester field based on the gap in enrollment year
-        $yearsGap = Carbon::parse($request->enrollment_year)->diffInYears(Carbon::now());
-
-        if ($yearsGap <= 1) {
-            $request->merge(['semester' => '1st or 2nd']);
-        } elseif ($yearsGap == 4) {
-            $request->merge(['semester' => '1st to 8th']);
-        }
         $user = auth()->user();
-        $path = $request->file('user_picture')->store('public/user_pictures');
 
-        // If you want to store the relative path in the database, remove 'public/' from the stored path
-        $imagePath = str_replace('public/', '', $path);
+        // Handle image upload
+        if ($request->hasFile('user_picture')) {
+            // Store the new image and get the path
+            $path = $request->file('user_picture')->store('user_pictures', 'public');
+            $imagePath = str_replace('public/', '', $path); // Remove the 'public/' prefix to store the path correctly
+        } else {
+            // If no new image is uploaded, preserve the old image path
+            $imagePath = $user->user_picture;
+        }
 
-
-        // Store other fields
-        auth()->user()->update($request->only([
+        // Update the user profile
+        $user->update($request->only([
             'full_name',
             'gender',
             'date_of_birth',
@@ -162,13 +168,16 @@ class UserController extends Controller
             'bed_number',
             'guardian_name',
             'guardian_contact_number',
-            'guardian_address',
-            'user_picture' => $imagePath,
-
+            'guardian_address'
         ]));
+
+        $user->update([
+            'user_picture' => $imagePath,
+        ]);
 
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
     }
+
 
 
 

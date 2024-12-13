@@ -39,7 +39,7 @@ class BookingStatusUpdated extends Notification
         return (new MailMessage)
             ->subject('Booking Status Update')
             ->greeting('Hello ' . $notifiable->name)
-            ->line("Your booking for room ID {$this->booking->room_id} has been {$this->status}.")
+            ->line("Your booking for room Number {$this->booking->room_id} has been {$this->status}.")
             ->action('View Booking', url('/bookings/' . $this->booking->id))
             ->line('Thank you for using our application!');
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 
@@ -15,6 +15,8 @@ class AdminNotificationController extends Controller
     {
         $this->middleware(function ($request, $next) {
             $notifications = Auth::user() ? Auth::user()->unreadNotifications : collect();
+
+            Log::info('Notifications count: ' . $notifications->count()); // Log the count of notifications
 
             View::share('notifications', $notifications);
 
@@ -32,7 +34,7 @@ class AdminNotificationController extends Controller
     }
     public function markAsRead($notificationId)
     {
-        $notification = auth()->user()->notifications()->find($notificationId);
+        $notification = auth()->user()->notifications->find($notificationId);
 
         if ($notification) {
             $notification->markAsRead();

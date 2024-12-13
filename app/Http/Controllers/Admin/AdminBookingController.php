@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Events\BookingStatusUpdatedEvent;
@@ -33,7 +33,6 @@ class AdminBookingController extends Controller
         $booking->status = 'approved';
         $booking->save();
 
-        // Get the user associated with the booking
         $user = $booking->user; 
 
         $bed = Bed::where('bed_no', $booking->bedno)
@@ -44,7 +43,7 @@ class AdminBookingController extends Controller
             $bed->update([
                 'is_occupied' => true,
                 'status' => 'booked',
-                'user_id' => $user->user_id  // Assign the bed to the user
+                'user_id' => $user->user_id 
             ]);
         }
 
@@ -57,28 +56,23 @@ class AdminBookingController extends Controller
     {
         $booking = Booking::findOrFail($id);
 
-        // Update the booking status to 'rejected'
         $booking->status = 'rejected';
         $booking->save();
 
-        // Get the user associated with the booking
         $user = $booking->user;
         $bed = Bed::where('bed_no', $booking->bedno)
             ->where('room_id', $booking->room_id)
-            ->first(); // Get the specific bed
+            ->first(); 
 
         if ($bed) {
-            // Mark the bed as occupied and assign the user to it
             $bed->update([
                 'is_occupied' => false,
                 'status' => 'available',
             ]);
         }
 
-        // Send a rejection notification to the user
         $user->notify(new BookingStatusUpdated($booking, 'rejected'));
 
-        // Redirect back with success message
         return redirect()->route('admin.bookings.list')->with('success', 'Booking rejected successfully');
     }
 }

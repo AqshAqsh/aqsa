@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Booking;
 use App\Models\Block;
 use App\Models\Facility;
-
 use App\Models\Room;
 use App\Models\RoomCategory;
 use Illuminate\Http\Request;
@@ -17,6 +16,7 @@ class RoomController extends Controller
 {
     public function index()
     {
+
         $rooms = Room::with('category')->latest()->get();
         return view('admin.room.list', compact('rooms'));
     }
@@ -38,17 +38,15 @@ class RoomController extends Controller
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Determine the block based on the room number
-        $roomNo = (int)$request->room_no; // Convert to integer for comparison
+        $roomNo = (int)$request->room_no; 
         $blockId = null;
         $picturePath = null;
         if ($request->hasFile('picture')) {
             $picturePath = $request->file('picture')->store('room_pictures', 'public');
         }
 
-        // Fetch the block based on the room number
         if ($roomNo >= 201 && $roomNo <= 220) {
-            $blockId = Block::where('block_name', 'A')->first()->id; // Assuming block names are 'A', 'B', etc.
+            $blockId = Block::where('block_name', 'A')->first()->id; 
         } elseif ($roomNo >= 221 && $roomNo <= 240) {
             $blockId = Block::where('block_name', 'B')->first()->id;
         } elseif ($roomNo >= 241 && $roomNo <= 260) {
@@ -59,7 +57,6 @@ class RoomController extends Controller
             return response()->json(['error' => 'Room number is out of range.'], 400);
         }
 
-        // Create the room
         Room::create([
             'room_no' => $request->room_no,
             'room_category_id' => $request->room_category_id,
@@ -71,7 +68,6 @@ class RoomController extends Controller
         ]);
         return redirect()->route('admin.room.list')->with('Success', 'Room successfully created');
 
-        //return response()->json(['message' => 'Room created successfully.'], 201);
     }
 
     public function edit($id)
@@ -87,7 +83,7 @@ class RoomController extends Controller
             'room_no' => 'required|string|max:255',
             'room_category_id' => 'required|exists:room_categories,id',
             'description' => 'nullable|string',
-            'room_charge' => 'required|integer|min:0', // Ensure it's treated as an integer
+            'room_charge' => 'required|integer|min:0', 
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -116,7 +112,6 @@ class RoomController extends Controller
             $validate['picture'] = $picturePath;
         }
 
-        // Cast room_charge to an integer
         $validate['room_charge'] = (int)$validate['room_charge'];
 
         $room->update(array_merge($validate, [
@@ -129,11 +124,19 @@ class RoomController extends Controller
 
     public function destroy($id)
     {
-        $room = Room::findOrFail($id);
-        $room->delete();
+        $room = Room::with('beds')->findOrFail($id);
 
-        return redirect()->route('admin.room.list')->with('Success', 'Room successfully deleted');
+        $occupiedBeds = $room->beds->where('is_occupied', 1);
+
+        if ($occupiedBeds->isNotEmpty()) {
+            return redirect()->route('admin.room.list')->with('error', 'Room cannot be deleted as it contains occupied or booked beds.');
+        }
+
+        $room->delete($id);
+
+        return redirect()->route('admin.room.list')->with('success', 'Room record successfully deleted');
     }
+
 
     public function availableRooms()
     {
@@ -148,24 +151,20 @@ class RoomController extends Controller
     }
 
 
-    //user methods
     public function showRooms()
     {
         $categories = RoomCategory::all();
         $facilities = Facility::all();
 
-        // Get the rooms with related data
         $rooms = Room::with(['category', 'facilities', 'beds'])
             ->whereHas('beds', function ($query) {
-                $query->where('is_occupied', 0);  // Check for beds that are not occupied
+                $query->where('is_occupied', 0);
             })
-            ->latest()
-            ->get();
+            ->latest()->paginate(3);
 
         $booking = Booking::where('user_id', auth()->id())->first();
 
 
-        // Pass selectedRoom as null for the default view
         $selectedRoom = null;
 
         return view('rooms', compact('categories', 'rooms', 'facilities', 'booking', 'selectedRoom'));
@@ -218,20 +217,17 @@ class RoomController extends Controller
 
     public function getRoomsByCategory($categoryId)
     {
-        // Fetch rooms for the selected category
         $rooms = Room::where('room_category_id', $categoryId)->get(['room_no']);
         return response()->json(['rooms' => $rooms]);
     }
     public function getRoomDetails($roomNo)
     {
-        // Fetch room details including block and beds
         $room = Room::with(['block', 'beds'])->where('room_no', $roomNo)->first();
 
         if ($room) {
             $blockName = $room->block ? $room->block->block_name : '';
             $beds = $room->beds;
 
-            // Return the details as JSON
             return response()->json([
                 'block_name' => $blockName,
                 'beds' => $beds
@@ -247,12 +243,10 @@ class RoomController extends Controller
         $roomNo = $request->input('room_no');
         $status = $request->input('status');
 
-        // Fetch the categories and facilities
         $categories = RoomCategory::all();
         $facilities = Facility::all();
 
-        // Build the query for rooms
-        $query = Room::with(['block', 'beds']); // Eager load block and beds relationships
+        $query = Room::with(['block', 'beds']);
 
         if ($category) {
             $query->where('room_category_id', $category);
@@ -262,30 +256,24 @@ class RoomController extends Controller
             $query->where('room_no', $roomNo);
         }
 
-        // Get the filtered rooms
-        $rooms = $query->get();
+        $rooms = $query->paginate(3);
 
-        // Fetch room numbers based on the selected category (to populate the dropdown)
         $roomNumbers = $category ? Room::where('room_category_id', $category)->get(['room_no']) : [];
 
         $roomAvailability = $rooms->map(function ($room) {
-            // Check if there are any beds available (where 'is_occupied' is false)
             $availableBeds = $room->beds->where('is_occupied', 0);
             $room->isAvailable = $availableBeds->isNotEmpty();
             return $room;
         });
 
-        // Handle selected room and related data
         $selectedRoom = null;
         $roomBeds = [];
 
         if ($roomNo) {
-            // Get the selected room based on room_no
             $selectedRoom = Room::with(['block', 'beds'])->where('room_no', $roomNo)->first();
 
-            // Get the beds for the selected room
             if ($selectedRoom) {
-                $roomBeds = $selectedRoom->beds; // Assuming the 'beds' relationship is defined correctly in the Room model
+                $roomBeds = $selectedRoom->beds;
             }
         }
 

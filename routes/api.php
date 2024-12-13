@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BedManager\RoomController;
+use App\Http\Controllers\UserHomeController;
+
 
 
 /*
@@ -24,4 +26,12 @@ Route::get('/rooms/{categoryId}', [RoomController::class, 'getRoomsByCategory'])
 
 // Fetch room details including block name and beds for a given room number
 Route::get('/room/details/{roomNo}', [RoomController::class, 'getRoomDetails']);
+
+
+Route::get('/api/rooms/{categoryId}', function ($categoryId) {
+    $roomNumbers = \App\Models\Room::where('room_category_id', $categoryId)->get(['room_no']);
+    return response()->json(['roomNumbers' => $roomNumbers]);
+});
+Route::get('/api/rooms/{categoryId}', [UserHomeController::class, 'getRoomsByCategory']);
+
 

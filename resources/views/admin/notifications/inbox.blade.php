@@ -16,9 +16,10 @@
 
                     <!-- Check if it's a new booking notification -->
                     @if(isset($notification->data['booking_id']))
-                        <a href="{{ route('admin.bookings.list', $notification->data['booking_id']) }}">View Booking</a>
+                        <a class="btn btn-warning mb-2" href="{{ route('admin.bookings.list', $notification->data['booking_id']) }}">View Booking</a>
+
                     @else
-                        <a href="{{ route('admin.feedback.list') }}">View Feedback</a>
+                        <a class="btn btn-warning mb-2" href="{{ route('admin.feedback.list') }}">View Feedback</a>
                     @endif
                     <br>
 
@@ -26,7 +27,7 @@
                     <form method="POST" action="{{ route('admin.notifications.markAsRead', $notification->id) }}">
                         @csrf
                         @method('PATCH')
-                        <button type="submit">Mark as Read</button>
+                        <button type="submit" style="background-color: #010142; color:bisque;">Mark as Read</button>
                     </form>
                 </li>
             @endforeach

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Bed;
 use App\Models\Room;
+use App\Models\RoomCategory;  // Ensure we include the RoomCategory model
 
 class BedController extends Controller
 {
@@ -18,25 +19,71 @@ class BedController extends Controller
 
     public function create()
     {
-        $rooms = Room::latest()->get();
-        return view('admin.bed.create', compact('rooms'));
+        // Define category-based bed limits
+        $categoryLimits = [
+            'Simple Room' => ['min' => 1, 'max' => 6],
+            'Luxury Room' => ['min' => 1, 'max' => 8],
+            'Small Single Room' => ['min' => 1, 'max' => 1],
+            'Double Sharing Room' => ['min' => 2, 'max' => 2],
+            'Triple Sharing Room' => ['min' => 3, 'max' => 3],
+            'Dormitory Room' => ['min' => 1, 'max' => 8],
+            'Luxury Single Room' => ['min' => 1, 'max' => 1],
+            'Deluxe Sharing Room' => ['min' => 1, 'max' => 4],
+        ];
+
+        $rooms = Room::all();
+
+        return view('admin.bed.create', compact('rooms', 'categoryLimits'));
     }
+
+        // Check if adding the requested number of beds exceeds the limit
+        //if (!$this->canAddMoreBeds($validate['room_id'], $validate['bed_no'])) {
+          //  return redirect()->back()->withErrors(['error' => 'Cannot add more beds. The maximum limit is 4 beds per room.']);
+        //}
+
 
     public function store(Request $request)
     {
-        // Validate incoming request
+        // Validate the request
         $validate = $request->validate([
-            'bed_no' => 'required|integer|min:1|max:4', // Number of beds to add (max 4)
-            'room_id' => 'required|exists:rooms,id', // Ensure room_id matches room_id in rooms table
-            'description' => 'required|string|max:255'
+            'bed_no' => 'required|integer|min:1',
+            'room_id' => 'required|exists:rooms,id',
+            'description' => 'required|string|max:255',
         ]);
 
-        // Check if adding the requested number of beds exceeds the limit
-        if (!$this->canAddMoreBeds($validate['room_id'], $validate['bed_no'])) {
-            return redirect()->back()->withErrors(['error' => 'Cannot add more beds. The maximum limit is 4 beds per room.']);
+        // Fetch the room and its category
+        $room = Room::findOrFail($validate['room_id']);
+        $category = $room->category; // Assuming 'roomCategory' relationship is defined
+
+        // Define category-based bed limits
+        $categoryLimits = [
+            'Simple Room' => ['min' => 1, 'max' => 6],
+            'Luxury Room' => ['min' => 1, 'max' => 8],
+            'Small Single Room' => ['min' => 1, 'max' => 1],
+            'Double Sharing Room' => ['min' => 2, 'max' => 2],
+            'Triple Sharing Room' => ['min' => 3, 'max' => 3],
+            'Dormitory Room' => ['min' => 4, 'max' => 8],
+            'Luxury Single Room' => ['min' => 1, 'max' => 1],
+            'Deluxe Sharing Room' => ['min' => 3, 'max' => 4],
+        ];
+
+        // Ensure the category name exists in the category limits
+        if (!isset($categoryLimits[$category->name])) {
+            return redirect()->back()->withErrors(['error' => 'Invalid room category or bed no.']);
         }
 
-        // Get current bed numbers for the room and extract the numeric part
+        // Get the category limits
+        $limits = $categoryLimits[$category->name];
+        $currentBedCount = Bed::where('room_id', $validate['room_id'])->count();
+        $newBedCount = $currentBedCount + $validate['bed_no'];
+
+        // Validate bed limits
+        if ($newBedCount > $limits['max'] || $newBedCount < $limits['min']) {
+            return redirect()->back()->withErrors([
+                'error' => "Beds for {$category->name} must be between {$limits['min']} and {$limits['max']}.",
+            ]);
+        }
+
         $existingBeds = Bed::where('room_id', $validate['room_id'])
             ->orderBy('bed_no')
             ->get()
@@ -49,7 +96,6 @@ class BedController extends Controller
         // Determine available bed numbers based on existing ones
         $availableBedNumbers = $this->getNextAvailableBedNumbers($existingBeds, $validate['bed_no']);
 
-        // Create multiple bed records based on available bed numbers
         foreach ($availableBedNumbers as $bedNumber) {
             Bed::create([
                 'bed_no' => "Bed No " . $bedNumber, // Assign available bed number
@@ -63,7 +109,8 @@ class BedController extends Controller
         $room->number_of_members += count($availableBedNumbers); // Increase by the number of beds added
         $room->save();
 
-        return redirect()->route('admin.bed.list')->with('success', 'Bed records successfully added');
+
+        return redirect()->route('admin.bed.list')->with('success', 'Beds successfully added.');
     }
 
     /**
@@ -94,7 +141,6 @@ class BedController extends Controller
         return $availableNumbers;
     }
 
-
     public function edit($id)
     {
         $bed = Bed::findOrFail($id);
@@ -109,7 +155,6 @@ class BedController extends Controller
             'description' => 'required|string|max:255',
         ]);
 
-        // Find the bed to update
         $bed = Bed::findOrFail($id);
 
         // Update the description only
@@ -122,32 +167,25 @@ class BedController extends Controller
     {
         $bed = Bed::findOrFail($id);
 
-        // Check if the bed is occupied
         if ($bed->is_occupied) {
             return redirect()->route('admin.bed.list')->with('error', 'This bed is currently occupied and cannot be deleted.');
         }
 
-        // Check if there is an active booking for this bed (booking exists but not occupied)
-        $booking = $bed->booking()->where('status', 'pending')->first();  // Assuming 'status' column tracks booking requests
-
+        $booking = $bed->booking()->where('status', 'pending')->first();  
         if ($booking) {
             return redirect()->route('admin.bed.list')->with('error', 'A booking request is made for this bed. Please reject the booking request first before deleting the bed.');
         }
 
-        // Check if the bed has an associated room and reduce the number of members
         $room = Room::find($bed->room_id);
         if ($room) {
-            $room->number_of_members -= 1;  // Decrease by one bed
+            $room->number_of_members -= 1;  
             $room->save();
         }
 
-        // Delete the bed record
         Bed::destroy($id);
 
         return redirect()->route('admin.bed.list')->with('success', 'Bed record successfully deleted');
     }
-
-
 
     private function canAddMoreBeds($roomId, $additionalBeds)
     {
@@ -157,6 +195,7 @@ class BedController extends Controller
 
         return $newBedCount <= $maxBedsPerRoom;
     }
+
     public function assign($bedId)
     {
         $bed = Bed::find($bedId);
@@ -165,9 +204,8 @@ class BedController extends Controller
             return redirect()->back()->with('error', 'Bed not found.');
         }
 
-        // Proceed with the assignment logic
         $bed->is_occupied = true;
-        $bed->user_id = Auth::id();  // Assuming you want to assign the bed to the current logged-in admin user
+        $bed->user_id = Auth::id();  
         $bed->save();
 
         return redirect()->route('admin.beds.assigned')->with('success', 'Bed successfully assigned.');

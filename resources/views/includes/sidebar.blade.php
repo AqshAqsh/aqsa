@@ -1,4 +1,3 @@
-
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     <li class="nav-item nav-category">Main</li>
@@ -11,13 +10,7 @@
       </a>
     </li>
 
-    <!-- Live Stream Menu -->
-    <li class="nav-item">
-      <a class="nav-link {{ request()->routeIs('live-stream') ? 'active' : '' }}" href="{{ route('live-stream') }}">
-        <span class="icon-bg"><i class="mdi mdi-webcam menu-icon"></i></span>
-        <span class="menu-title">Watch Live Stream</span>
-      </a>
-    </li>
+
 
     <!-- Residents Menu -->
     <li class="nav-item">
@@ -116,6 +109,13 @@
         </ul>
       </div>
     </li>
+    <!-- Live Stream Menu -->
+    <li class="nav-item">
+      <a class="nav-link {{ request()->routeIs('live-stream') ? 'active' : '' }}" href="{{ route('live-stream') }}">
+        <span class="icon-bg"><i class="mdi mdi-webcam menu-icon"></i></span>
+        <span class="menu-title">Watch Live Stream</span>
+      </a>
+    </li>
 
     <!-- Documentation Link -->
     <li class="nav-item documentation-link">
@@ -134,10 +134,12 @@
           <div>
             <div class="d-flex align-items-center">
               <div class="sidebar-profile-img">
-                <img src="{{ asset('assets/images/faces/face28.png') }}" alt="image">
+                <img class="img-avatar img-avatar48 img-avatar-thumb"
+                  src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('assets/images/faces/defaultprofile.png') }}"
+                  alt="{{ Auth::user()->name }}">
               </div>
               <div class="sidebar-profile-text">
-                <p class="mb-1">{{ Auth::user()->name }}</p>
+                <p class="mb-1 m-3">{{ Auth::user()->name }}</p>
               </div>
             </div>
           </div>

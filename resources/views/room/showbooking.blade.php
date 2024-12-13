@@ -2,8 +2,9 @@
 
 @section('content')
 <div class="container my-5">
-    <h2 class="text-center">Booking Details</h2>
+    <h2 class="fw-bold h-font text-center">Booking Request Details</h2>
     <div class="h-line bg-dark"></div>
+    <br>
 
     <div class="card">
         <div class="card-body">

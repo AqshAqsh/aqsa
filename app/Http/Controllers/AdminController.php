@@ -114,7 +114,7 @@ class AdminController extends Controller
 
     public function adminlogout(Request $request): \Illuminate\Http\RedirectResponse
     {
-        Auth::logout();
+        Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
@@ -130,13 +130,13 @@ class AdminController extends Controller
 
     public function view()
     {
-        $filePath = public_path('docs/Hostel.pdf');
+        $filePath = public_path('docs/ResideMe.pdf');
 
         // Check if the file exists
         if (file_exists($filePath)) {
             return response()->file($filePath, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="Hostel.pdf"',
+                'Content-Disposition' => 'inline; filename="ResideMe.pdf"',
             ]);
         } else {
             abort(404, 'Documentation not found');

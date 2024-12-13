@@ -3,6 +3,12 @@
 @section('content')
 <div class="container">
     <h1 class="my-4">User Profile</h1>
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
     @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -13,7 +19,7 @@
     </div>
     @endif
 
-    <form id="myForm" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">>
+    <form id="myForm" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -83,12 +89,29 @@
         <!-- Educational Details Section -->
         <h2 class="h4 mb-3">Educational Details</h2>
         <div class="mb-3">
-            <label for="college_roll_number" class="form-label">College Roll Number</label>
-            <input type="text" name="college_roll_number" class="form-control" value="{{ old('college_roll_number', auth()->user()->college_roll_number) }}" required>
-            @error('college_roll_number')
+            <label for="enrollment_year" class="form-label">Enrollment Year</label>
+            <select name="enrollment_year" id="enrollment_year" class="form-control" required>
+                <option value="">Select Enrollment Year</option>
+                @for ($year = 2020; $year <= 2024; $year++)
+                    <option value="{{ $year }}" {{ old('enrollment_year', auth()->user()->enrollment_year ?? '') == $year ? 'selected' : '' }}>
+                    {{ $year }}
+                    </option>
+                    @endfor
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="semester" class="form-label">Semester/Year of Study</label>
+            <select name="semester" id="semester" class="form-control" required>
+                <option value="">Select Semester/Year</option>
+                <!-- Options will be dynamically updated using JavaScript -->
+            </select>
+            @error('semester')
             <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
+
+
 
         <div class="mb-3">
             <label for="college_department" class="form-label">College Department</label>
@@ -97,15 +120,6 @@
             <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
-
-        <div class="mb-3">
-            <label for="semester" class="form-label">Semester/Year of Study</label>
-            <input type="text" name="semester" class="form-control" value="{{ old('semester', auth()->user()->semester) }}" required>
-            @error('semester')
-            <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
-
         <div class="mb-3">
             <label for="program" class="form-label">Program/Course</label>
             <input type="text" name="program" class="form-control" value="{{ old('program', auth()->user()->program) }}" required>
@@ -113,14 +127,16 @@
             <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
-
         <div class="mb-3">
-            <label for="enrollment_year" class="form-label">Enrollment Year</label>
-            <input type="number" name="enrollment_year" class="form-control" value="{{ old('enrollment_year', auth()->user()->enrollment_year) }}" required min="2000" max="{{ date('Y') }}">
-            @error('enrollment_year')
+            <label for="college_roll_number" class="form-label">College Roll Number</label>
+            <input type="text" name="college_roll_number" class="form-control" value="{{ old('college_roll_number', auth()->user()->college_roll_number) }}" required>
+            @error('college_roll_number')
             <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
+
+
+
 
         <!-- Hostel Information Section -->
         <h2 class="h4 mb-3">Hostel Information</h2>
@@ -175,15 +191,58 @@
         </div>
         <div class="mb-3">
             <label for="user_picture" class="form-label">Profile Picture</label>
-            <input type="file" name="user_picture" id="user_picture" class="form-control" >
+            <input type="file" name="user_picture" id="user_picture" class="form-control">
             @if(auth()->user()->user_picture)
-            <img src="{{ asset('storage/' . auth()->user()->user_picture) }}" alt="User Picture" class="img-thumbnail"  width="100">
+            <img src="{{ asset('storage/' . auth()->user()->user_picture) }}?{{ time() }}" alt="User Picture" class="img-thumbnail" style="width: 150px; height: 150px;">
             @endif
 
         </div>
 
-        <!-- Submit Button -->
         <button type="submit" class="btn btn-warning">Update Profile</button>
     </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const enrollmentYearDropdown = document.getElementById('enrollment_year');
+        const semesterDropdown = document.getElementById('semester');
+        const currentYear = new Date().getFullYear();
+
+        // Function to update semesters based on enrollment year
+        function updateSemesters() {
+            const enrollmentYear = parseInt(enrollmentYearDropdown.value);
+            semesterDropdown.innerHTML = '<option value="">Select Semester/Year</option>'; // Clear existing options
+
+            if (!enrollmentYear || isNaN(enrollmentYear)) return; // Exit if no valid enrollment year
+
+            const yearsSinceEnrollment = currentYear - enrollmentYear;
+
+            if (yearsSinceEnrollment < 2) {
+                // Show 1st and 2nd Year Semesters
+                addSemesterOptions([1, 2, 3, 4]);
+            } else if (yearsSinceEnrollment >= 2 && yearsSinceEnrollment < 4) {
+                // Show Semesters 5-8
+                addSemesterOptions([5, 6, 7, 8]);
+            } else {
+                // Show All Semesters 1-8
+                addSemesterOptions([1, 2, 3, 4, 5, 6, 7, 8]);
+            }
+        }
+
+        // Helper to add semester options to the dropdown
+        function addSemesterOptions(semesters) {
+            semesters.forEach(semester => {
+                const option = document.createElement('option');
+                option.value = semester;
+                option.textContent = `${semester} Semester`;
+                semesterDropdown.appendChild(option);
+            });
+        }
+
+        // Attach event listener to enrollment year dropdown
+        enrollmentYearDropdown.addEventListener('change', updateSemesters);
+
+        // Initialize semesters on page load if an enrollment year is already selected
+        updateSemesters();
+    });
+</script>
 @endsection

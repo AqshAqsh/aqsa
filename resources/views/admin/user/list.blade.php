@@ -10,7 +10,7 @@
     <div class="row" id="proBanner">
         <div class="col-12">
             <span class="d-flex align-items-center purchase-popup">
-                <h3>User Records </h3>
+                <h3 class="mt-2 mr-3">User Records </h3>
                 <a href="{{ route('admin.user.create') }}" class="btn purchase-button">Add New</a>
             </span>
         </div>

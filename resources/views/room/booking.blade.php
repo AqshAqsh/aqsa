@@ -73,19 +73,33 @@
 
             <div class="form-group row">
                 <label for="year_of_study" class="col-sm-3 col-form-label">Session Year</label>
-                <input type="text" name="year_of_study" class="form-control" id="year_of_study" value="{{ old('year_of_study') }}" required>
+                <select name="year_of_study" class="form-control" id="year_of_study" required>
+                    <option value="">Select Session Year</option>
+                    @for ($year = 2021; $year <= 2024; $year++)
+                        <option value="{{ $year }}" {{ old('year_of_study') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endfor
+                </select>
                 @error('year_of_study')
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
 
+
             <div class="form-group row">
                 <label for="department" class="col-sm-3 col-form-label">Department</label>
-                <input type="text" name="department" class="form-control" id="department" value="{{ old('department') }}" required>
+                <select name="department" id="department" class="form-control" required>
+                    <option value="">Select Department</option>
+                    @foreach ($departments as $department)
+                    <option value="{{ $department }}" {{ old('department') == $department ? 'selected' : '' }}>
+                        {{ $department }}
+                    </option>
+                    @endforeach
+                </select>
                 @error('department')
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
+
 
             <div class="form-group row">
                 <label for="rollno" class="col-sm-3 col-form-label">College Rollno</label>

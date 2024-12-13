@@ -23,6 +23,7 @@
     <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/common.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 </head>
 
@@ -65,7 +66,7 @@
                         @else
 
                         <li class="nav-item nav-profile dropdown">
-                            <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" data-bs-offset="0,10" aria-expanded="false">
                                 <div class="profile align-items-center">
 
                                     <div class="nav-profile-img">
@@ -79,7 +80,7 @@
                                 </div>
 
                             </a>
-                            <div class="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
+                            <div class="dropdown-menu navbar-dropdown dropdown-menu-end p-0 border-0 font-size-sm" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
                                 <div class="p-3 text-center nav-profile-img" style="background-color: #010142;">
                                     <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ Auth::user()->user_picture ? asset('storage/' . Auth::user()->user_picture) : asset('images/defaultprofile.png') }}"
                                         alt="{{ Auth::user()->name }}">
@@ -174,6 +175,26 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <style>
+        /* Force dropdown to fit within its container */
+        .nav-profile .dropdown-menu {
+            right: 0;
+            /* Align it to the right of the container */
+            left: auto;
+            /* Remove default left alignment */
+            width: 250px;
+            /* Adjust width as needed */
+            overflow: hidden;
+            /* Prevent content overflow */
+        }
+
+        .nav-profile .dropdown-menu img {
+            max-width: 100%;
+            /* Ensure images scale correctly */
+            height: auto;
+        }
+    </style>
+
 
 </body>
 

@@ -16,6 +16,8 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 
 
     <!-- Toastr CSS -->
@@ -63,7 +65,7 @@
                 <footer class="footer">
                     <div class="footer-inner-wraper">
                         <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © ResideMe.com Btach 2020-2024</span>
+                            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">&copy; {{ date('Y') }} ResideMe. All Rights Reserved.</span>
                             <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Project <a href="http://127.0.0.1:8000/" target="_blank">ResideMe</a> </span>
                         </div>
                     </div>

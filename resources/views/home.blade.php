@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'ResideMe _ Home')
+@section('title', 'ResideMe_Home')
 @section('content')
 
 @include('layouts.links')
@@ -76,10 +76,10 @@
                         </div>
 
                         <div class="col-md-3">
-                            <label for="room_no" class="form-label" style="font-weight: 500;">Room</label>
-                            <select class="form-select shadow-none" name="room_no" id="room_no">
+                            <label for="room_no">Room Number:</label>
+                            <select name="room_no" id="room_no" class="form-control">
                                 <option value="">Select Room Number</option>
-                                @if(request()->category && !empty($roomNumbers))
+                                @if(request()->category)
                                 @foreach($roomNumbers as $room)
                                 <option value="{{ $room->room_no }}" {{ request('room_no') == $room->room_no ? 'selected' : '' }}>
                                     {{ $room->room_no }}
@@ -148,7 +148,6 @@
 
         </div>
     </div>
-    </div>
 
 
 
@@ -194,13 +193,13 @@
                     <div class="swiper-slide">
                         <div class="testimonial-item">
                             <img src="{{ asset('images/dininghall.jpg') }}" width="30px">
-                            <h6 class="m-0 ms-0">ResideMe Safety</h6>
+                            <h6 class="m-0 ms-0">Dinning Hall</h6>
                         </div>
                     </div>
                     <div class="swiper-slide">
                         <div class="testimonial-item">
                             <img src="{{ asset('images/outside.jpg') }}" width="30px">
-                            <h6 class="m-0 ms-0">outside</h6>
+                            <h6 class="m-0 ms-0">Outside</h6>
                         </div>
                     </div>
                     <div class="swiper-slide">
@@ -399,16 +398,20 @@
             fetch(`/api/rooms/${categoryId}`)
                 .then(response => response.json())
                 .then(data => {
-                    data.roomNumbers.forEach(room => {
+                    data.rooms.forEach(room => {
                         const option = document.createElement('option');
                         option.value = room.room_no;
                         option.textContent = room.room_no;
                         roomNoSelect.appendChild(option);
                     });
+                })
+                .catch(error => {
+                    console.error('Error fetching room numbers:', error);
                 });
         }
     });
 </script>
+
 
 <script>
     var swiper = new Swiper(".Swiper-container", {

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\Facility;
 use App\Models\RoomCategory;
+use Illuminate\Support\Facades\Log;
+
 
 class UserHomeController extends Controller
 {
@@ -15,7 +17,7 @@ class UserHomeController extends Controller
         $facilities = Facility::all();
 
         $rooms = collect(); // Empty collection to show no rooms
-        $roomNumbers = collect(); 
+        $roomNumbers = collect();
 
         // Pass categories, rooms, and facilities data to the view
         return view('home', compact('categories', 'rooms', 'facilities', 'roomNumbers'));
@@ -51,5 +53,19 @@ class UserHomeController extends Controller
         $roomNumbers = $category ? Room::where('room_category_id', $category)->get(['id', 'room_no']) : collect();
 
         return view('home', compact('categories', 'rooms', 'facilities', 'roomNumbers'));
+    }
+
+    public function getRoomsByCategory($categoryId)
+    {
+        Log::info('Category ID: ' . $categoryId);
+        $roomNumbers = Room::where('room_category_id', $categoryId)->get(['id', 'room_no']);
+
+        // Debugging: Log or Return Response
+        if ($roomNumbers->isEmpty()) {
+            return response()->json(['roomNumbers' => []], 200);
+        }
+
+        Log::info('Room Numbers:', $roomNumbers->toArray());
+        return response()->json(['roomNumbers' => $roomNumbers], 200);
     }
 }

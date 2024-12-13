@@ -67,17 +67,28 @@
         <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
           <i class="mdi mdi-bell-outline"></i>
           <span class="count-symbol bg-danger"></span>
-
         </a>
 
-        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" style="max-height: 523px; overflow-y: auto;">
           <h6 class="p-3 mb-0 text-white py-4" style="background-color: #010142;">Notifications</h6>
           <div class="dropdown-divider"></div>
 
-
-          @if (isset($notifications) && $notifications->isNotEmpty())
+          @if ($notifications->isNotEmpty())
           @foreach ($notifications as $notification)
-          <a class="dropdown-item preview-item">
+          @php
+          switch ($notification->type) {
+          case 'NewBookingNotification':
+          $route = route('admin.bookings.list');
+          break;
+          case 'FeedbackNotification':
+          $route = route('admin.feedback.list');
+          break;
+          default:
+          $route = route('admin.notifications');
+          }
+          @endphp
+
+          <a class="dropdown-item preview-item" href="{{ $route }}">
             <div class="preview-thumbnail">
               <div class="preview-icon bg-warning">
                 <i class="mdi mdi-calendar"></i>
@@ -91,7 +102,7 @@
           <div class="dropdown-divider"></div>
           @endforeach
           @else
-          <p>No new notifications.</p>
+          <p class="p-3 mb-0">No new notifications.</p>
           @endif
 
           <h6 class="p-3 mb-0 text-center">
@@ -99,6 +110,7 @@
           </h6>
         </div>
       </li>
+
 
 
     </ul>

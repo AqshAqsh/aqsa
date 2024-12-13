@@ -40,6 +40,7 @@ class NewBookingNotification extends Notification
             ->line('You have a new booking request.')
             ->action('View Booking', route('admin.bookings.list', ['booking' => $this->booking->id]))
             ->line('Please review the booking and approve or reject it.');
+            
     }
 
     /**

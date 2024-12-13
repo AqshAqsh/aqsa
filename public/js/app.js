@@ -52464,7 +52464,7 @@ var Runtime = {
     },
     addUnloadListener(listener) {
         if (window.addEventListener !== undefined) {
-            window.addEventListener('unload', listener, false);
+            window.addEventListener('pagehide', listener, false);
         }
         else if (window.attachEvent !== undefined) {
             window.attachEvent('onunload', listener);

@@ -30,7 +30,7 @@
 
             <!-- Room Image -->
             <div class="col-md-12 mb-3 px-4">
-                <img src="{{ asset('images/3.png') }}" class="img-fluid rounded-start w-100 h-100" alt="Room Image">
+            <img src="{{ asset('storage/' . $room->picture) }}" class="img-fluid rounded-start" alt="Room Image">
             </div>
 
             <!-- Room Category and Details -->
@@ -49,7 +49,7 @@
                 @endif
             </div>
 
-            <div class="col-md-6 px-4">
+            <div class="Guest">
                 <h6 class="mb-1">Guests</h6>
                 <span class="badge rounded-pill bg-light text-dark text-wrap">
                     {{ $room->number_of_members }} Members
@@ -66,11 +66,9 @@
 
             </div>
 
-            <!-- Room Charge and Booking -->
             <div class="col-md-12 text-center mt-4">
-                <h5 class="mb-4">${{ $room->room_charge }} Per Day</h5>
-                <a href="" class="btn btn-sm text-white bg-warning shadow-none w-100 mb-2">Book Now</a>
-                <a href="{{ route('room.details', ['id' => $room->id]) }}" class="btn btn-sm btn-outline-dark shadow-none w-100">More Details</a>
+                <h5 class="mb-4">${{ $room->room_charge }} Per Month</h5>
+                <a href="" class="btn btn-sm text-white bg-warning shadow-none p-3 w-100 mb-2">Book Now</a>
             </div>
         </div>
     </div>

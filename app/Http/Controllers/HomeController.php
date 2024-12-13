@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Room;
+use App\Models\Facility;
+use App\Models\RoomCategory;
+
 class HomeController extends Controller
 {
     /**
@@ -11,9 +15,16 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
+
+    public function index()
     {
-        $this->middleware('auth');
+        $categories = RoomCategory::all();
+        $facilities = Facility::all();
+
+        $rooms = collect(); // Empty collection to show no rooms
+        $roomNumbers = collect();
+
+        return view('welcome', compact('categories', 'rooms', 'facilities', 'roomNumbers'));
     }
 
     /**
@@ -21,9 +32,6 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        return view('home');
-    }
+
 
 }

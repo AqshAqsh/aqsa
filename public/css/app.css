@@ -3508,7 +3508,7 @@ fieldset:disabled .btn {
   --bs-btn-hover-color: #fff;
   --bs-btn-hover-bg: #040464;
   --bs-btn-hover-border-color: #040464;
-  --bs-btn-focus-shadow-rgb:  1, 1, 66;
+  --bs-btn-focus-shadow-rgb: 1, 1, 66;
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: #040464;
   --bs-btn-active-border-color: #040464;
@@ -8277,6 +8277,7 @@ fieldset:disabled .btn {
 }
 
 .swiper-container {
+  overflow: hidden;
   height: 900px;
 }
 
@@ -8286,6 +8287,58 @@ fieldset:disabled .btn {
   object-fit: cover;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination li {
+  margin: 0 5px;
+  font-size: 16px;
+  width: 40px;
+  /* Adjust this value to your preference */
+  height: 40px;
+  /* Ensure it's the same as width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination li a,
+.pagination li span {
+  display: inline-block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #f4f4f4;
+    color: #010142;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    text-align: center;
+    line-height: 40px;
+}
+
+.pagination li a:hover {
+  background-color: #010142;
+  color: #fff;
+}
+
+.pagination .active span {
+  background-color: #010142;
+  color: white;
+}
+
+.pagination .disabled span {
+  background-color: #e0e0e0;
+  color: #bbb;
+}
+
+.pagination li a {
+  cursor: pointer;
+}
 
 
 .swiper-container {
@@ -8297,6 +8350,8 @@ fieldset:disabled .btn {
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
+
 }
 
 .nav-profile-img1 img {
@@ -8345,11 +8400,16 @@ fieldset:disabled .btn {
   position: relative;
   margin: 0 auto;
 }
+
 .swiper-pagination {
-  position: relative;  /* Changes position to relative */
-  bottom: 0;           /* Adjusts the bottom to move pagination below */
-  margin-top: 10px;    /* Adds margin for spacing below the slides */
-  text-align: center;  /* Centers the pagination */
+  position: relative;
+  /* Changes position to relative */
+  bottom: 0;
+  /* Adjusts the bottom to move pagination below */
+  margin-top: 10px;
+  /* Adds margin for spacing below the slides */
+  text-align: center;
+  /* Centers the pagination */
 }
 
 .testimonial-item {

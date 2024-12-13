@@ -27,6 +27,21 @@ class BookingController extends Controller
             dd("User ID not set for the logged-in user.");
         }
 
+        $departments = [
+            'Information Technology',
+            'Economics',
+            'English',
+            'Chemistry',
+            'Mathematics',
+            'Psychology',
+            'Ismaliyat',
+            'Education',
+            'Physics',
+            'Botany',
+            'Zoology',
+            'Computer Science',
+            'BBA'
+        ];
         $room = Room::where('room_no', $room_no)
             ->with(['beds' => function ($query) {
                 $query->where('status', 'available'); // Only fetch available beds
@@ -38,7 +53,7 @@ class BookingController extends Controller
             return redirect()->route('room')->with('error', 'No available beds in this room.');
         }
 
-        return view('room.booking', compact('userId', 'room', 'beds'));
+        return view('room.booking', compact('userId', 'departments', 'room', 'beds'));
     }
 
     public function show($id)
@@ -46,6 +61,7 @@ class BookingController extends Controller
         $user = Auth::user();
 
         $booking = Booking::where('user_id', $user->user_id)->findOrFail($id);
+        
 
         if (strtolower(trim($booking->status)) === 'deleted' || strtolower(trim($booking->status)) === 'rejected') {
 
@@ -57,6 +73,7 @@ class BookingController extends Controller
             if ($newBooking) {
                 return view('room.showbooking', ['booking' => $newBooking]);
             }
+
 
             return view('room.showbooking', compact('booking'));
         }

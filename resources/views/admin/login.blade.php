@@ -1,4 +1,4 @@
-@extends('layouts.admin-app')
+@extends('layouts.adminlogin-app')
 
 
 @section('content')
@@ -18,9 +18,9 @@
         </div>
         @endif
 
-        <div class="col-md-8">
+        <div class="col-md-7">
             <div class="card">
-                <div class="card-header">Admin {{ __('Login') }}</div>
+                <div class="card-header" style="background-color: #010142; color:#ffff;">Admin {{ __('Login') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('admin.login.submit') }}">

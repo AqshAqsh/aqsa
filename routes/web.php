@@ -28,15 +28,10 @@ use Illuminate\Support\Facades\Mail;
 |--------------------------------------------------------------------------
 */
 
+Route::get('/', [HomeController::class, 'index'])->middleware('guest');
 
-Route::get('/', function () {
-    return view('welcome');
-})->middleware('guest');
 
-Route::get('/api/rooms/{categoryId}', function ($categoryId) {
-    $roomNumbers = \App\Models\Room::where('room_category_id', $categoryId)->get(['room_no']);
-    return response()->json(['roomNumbers' => $roomNumbers]);
-});
+
 
 
 Route::get('/forgot-user-id', [LoginController::class, 'showForgotIdForm'])->name('forgot.user.id');
@@ -58,26 +53,38 @@ Route::prefix('user')->group(function () {
 
 
     Route::middleware('auth:web')->group(function () {
+        
         Route::post('/logout', [LoginController::class, 'userLogout'])->name('user.logout');
+        
+        //profile
         Route::get('/profile', [UserController::class, 'showProfile'])->name('profile.show');
         Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
-        Route::get('rooms/filter', [RoomController::class, 'filterRooms'])->name('rooms.filter');
-        Route::get('/notifications', [UserNotificationController::class, 'index'])->name('user.notifications');
-        Route::post('/notifications/read/{id}', [UserNotificationController::class, 'markAsRead'])->name('notification.read');
-        Route::get('/feedback/create', [FeedbackController::class, 'create'])->name('feedback.create');
-        Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
-        Route::get('/room/{id}', [RoomController::class, 'showRoomDetails'])->name('room.details');
+
+        //home/filter
+        Route::get('/check-availability', [UserHomeController::class, 'checkAvailability'])->name('check.availability');
+
+
+        //room page /filter/ and booking
         Route::get('booking/{booking_id}', [BookingController::class, 'show'])->name('room.showbooking');
+        Route::get('rooms/filter', [RoomController::class, 'filterRooms'])->name('rooms.filter');
+        Route::get('/room/{id}', [RoomController::class, 'showRoomDetails'])->name('room.details');
         Route::get('/room/{room_no}/booking', [BookingController::class, 'bookRoom'])->name('room.booking');
         Route::post('/room/{room_no}/booking', [BookingController::class, 'store'])->name('room.booking.store');
-        Route::get('/room/booking/{id}/downloadReport', [BookingController::class, 'downloadReport'])->name('room.report');
         Route::delete('/booking/{id}/delete', [BookingController::class, 'deleteBooking'])->name('booking.delete');
+        Route::get('/room/booking/{id}/downloadReport', [BookingController::class, 'downloadReport'])->name('room.report');
+
+        //user notifications
+        Route::get('/notifications', [UserNotificationController::class, 'index'])->name('user.notifications');
+        Route::post('/notifications/read/{id}', [UserNotificationController::class, 'markAsRead'])->name('notification.read');
+
+        //user feedbacks
+        Route::get('/feedback/create', [FeedbackController::class, 'create'])->name('feedback.create');
+        Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+
+        //notice
         Route::get('/notice', [UserController::class, 'showNotice'])->name('notice');
         Route::post('/notice/{noticeId}/mark-as-read', [UserController::class, 'markAsRead'])->name('notices.markAsRead');
-        Route::get('/check-availability', [UserHomeController::class, 'checkAvailability'])->name('check.availability');
-        Route::get('/filterRooms', [RoomController::class, 'filterRooms'])->name('rooms.filter');
-        //Route::get('/rooms/search', [RoomController::class, 'search'])->name('room.search');
-        //Route::get('/get-room-details/{room_no}', [RoomController::class, 'getRoomDetails']);
+        //Route::get('/filterRooms', [RoomController::class, 'filterRooms'])->name('rooms.filter');
     });
 });
 
@@ -147,7 +154,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/room/create', 'create')->name('admin.room.create');
             Route::post('/room/store', 'store')->name('admin.room.store');
             Route::get('/room/edit/{id}', 'edit')->name('admin.room.edit');
-            Route::delete('/room/delete/{id}', 'delete')->name('admin.room.delete');
+            Route::delete('/room/delete/{id}', 'destroy')->name('admin.room.delete');
             Route::put('/room/update/{id}', 'update')->name('admin.room.update');
         });
 

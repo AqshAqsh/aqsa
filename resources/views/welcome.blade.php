@@ -15,6 +15,11 @@
                 padding: 0 35px;
             }
         }
+
+        .facility-checkbox {
+            width: 48%;
+            margin-bottom: 10px;
+        }
     </style>
     @include('layouts.links')
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -70,7 +75,7 @@
             </div>
         </div>
     </nav>
-    <div class="container-fluid pl-lg-3 px-lg-4 mt-4">
+    <div class="container-fluid pl-lg-3 ">
         <div class="swiper Swiper-container">
             <div class="swiper-wrapper">
                 <div class="swiper-slide">
@@ -94,43 +99,97 @@
             </div>
         </div>
     </div>
-
     <div class="container availability-form">
         <div class="row">
             <div class="col-lg-12 bg-white shadow p-4 rounded">
                 <h5 class="mb-4">Check Room Availability</h5>
-                <form action="" method="GET">
-                    <div class="row align-items-end">
-                        <div class="col-lg-3 mb-3">
-                            <label class="form-label " style="font-weight: 500;">Block</label>
-                            <select class="form-select shadow-none" name="block">
-                                <option selected>select</option>
-                                <option value="1">A</option>
-                                <option value="2">B</option>
-                                <option value="3">C</option>
-                                <option value="4">D</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-3 mb-3">
-                            <label class="form-label " style="font-weight: 500;">Room Category</label>
-                            <input type="text" class="form-control shadow-none" name="category">
-                        </div>
-                        <div class="col-lg-4 mb-3">
-                            <label class="form-label " style="font-weight: 500;">Facilities</label>
-                            <select class="form-select shadow-none" name="facility">
-                                <option selected>Open this select Facilities</option>
-                                <option value="1">Wifi</option>
-                                <option value="2">Television</option>
-                                <option value="3">Cooler</option>
+
+                <!-- Filter Form -->
+                @if(!request()->category)
+                <!-- Show Form if the category is not selected -->
+                <form action="{{ route('check.availability') }}" method="GET">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="category" class="form-label" style="font-weight: 500;">Room Category</label>
+                            <select name="category" id="category" class="form-control">
+                                <option value="">Select Category</option>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                @endforeach
                             </select>
                         </div>
 
-                        <div class="col-lg-2 mb-lg-3 mt-2">
-                            <button type="submit" class="btn text-white shadow-none btn-warning">Check Availability</button>
+                        <div class="col-md-3">
+                            <label for="room_no">Room Number:</label>
+                            <select name="room_no" id="room_no" class="form-control">
+                                <option value="">Select Room Number</option>
+                                @if(request()->category)
+                                @foreach($roomNumbers as $room)
+                                <option value="{{ $room->room_no }}" {{ request('room_no') == $room->room_no ? 'selected' : '' }}>
+                                    {{ $room->room_no }}
+                                </option>
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="facilities" class="form-label" style="font-weight: 500;">Facilities</label>
+                            <select name="facilities[]" id="facilities" class="form-control" multiple>
+                                @foreach($facilities as $facility)
+                                <option value="{{ $facility->id }}" {{ in_array($facility->id, request('facilities', [])) ? 'selected' : '' }}>
+                                    {{ $facility->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Button in the same row -->
+                        <div class="col-md-3 d-flex align-items-center" style="font-weight: 800;">
+                            <button type="submit" class="btn btn-warning w-100">Check Availability</button>
                         </div>
                     </div>
                 </form>
+
+                @else
+                <!-- Show Results if the form has been submitted -->
+                <div class="mt-4">
+                    <h3>Available Rooms</h3>
+
+                    @if(isset($rooms) && $rooms->isEmpty())
+                    <p>No rooms available for the selected criteria.</p>
+                    @elseif(isset($rooms) && $rooms->isNotEmpty())
+                    <div class="row">
+                        @foreach($rooms as $room)
+                        <div class="col-md-4 mb-3">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <h5 class="card-title">Room {{ $room->room_no }}</h5>
+                                    <p class="card-text">
+                                        <strong>Category:</strong> {{ $room->category->name }} <br>
+                                        <strong>Capacity:</strong> {{ $room->number_of_members }} <br>
+                                        <strong>Facilities:</strong>
+                                        @foreach($room->facilities as $facility)
+                                        {{ $facility->name }}@if(!$loop->last), @endif
+                                        @endforeach
+                                    </p>
+                                    <a href="{{ route('room.booking', ['room_no' => $room->room_no]) }}" class="btn btn-primary">Book Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <p>Please select criteria to check room availability.</p>
+                    @endif
+                </div>
+                @endif
+
+
+
+
             </div>
+
         </div>
     </div>
 
@@ -247,11 +306,12 @@
         <h2 class="fw-bold h-font text-center">What Our Users Say</h2>
         <div class="h-line bg-dark"></div>
     </div>
+
     <div class="container mt-5">
         <div class="swiper swiper-testimonial ">
             <div class="swiper-wrapper mb-5">
                 <div class="swiper-slide bg-white p-4">
-                    <div class="profile d-flex align-items-center mb-3">
+                    <div class="profile d-flex align-items-right mb-3">
 
                         <div class="nav-profile-img1">
                             <img src="{{ asset('images/face5.jpg') }}" alt="image">
@@ -367,6 +427,35 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
+        // This script dynamically updates room numbers based on the selected category
+        document.getElementById('category').addEventListener('change', function() {
+            const categoryId = this.value;
+            const roomNoSelect = document.getElementById('room_no');
+
+            // Clear existing room options
+            roomNoSelect.innerHTML = '<option value="">Select Room Number</option>';
+
+            if (categoryId) {
+                // Fetch room numbers related to the selected category via AJAX
+                fetch(`/api/rooms/${categoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.rooms.forEach(room => {
+                            const option = document.createElement('option');
+                            option.value = room.room_no;
+                            option.textContent = room.room_no;
+                            roomNoSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching room numbers:', error);
+                    });
+            }
+        });
+    </script>
+
+
+    <script>
         var swiper = new Swiper(".Swiper-container", {
             spaceBetween: 30,
             effect: "fade",
@@ -386,7 +475,7 @@
                 slidesPerView: 1,
                 spaceBetween: 30,
                 coverflowEffect: {
-                    rotate: 50,
+                    rotate: 25,
                     stretch: 0,
                     depth: 100,
                     modifier: 1,

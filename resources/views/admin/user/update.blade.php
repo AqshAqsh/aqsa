@@ -22,7 +22,6 @@
                             @csrf
                             @method('PUT')
 
-                            <!-- Name Field -->
                             <div class="form-group">
                                 <label for="name">Name</label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name', $user->name) }}" required>
